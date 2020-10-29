@@ -1,12 +1,10 @@
 package com.example.hexagonal.arch.service.users.adapter.persistence;
 
-import com.example.hexagonal.arch.service.common.reactive.ReactiveOptional;
 import com.example.hexagonal.arch.service.common.annotation.Adapter;
 import com.example.hexagonal.arch.service.users.adapter.persistence.model.UserData;
 import com.example.hexagonal.arch.service.users.domain.model.User;
 import com.example.hexagonal.arch.service.users.domain.model.UserId;
 import com.example.hexagonal.arch.service.users.domain.port.persistence.WriteUserPort;
-import reactor.core.publisher.Mono;
 
 @Adapter
 class ChangeUserAdapter implements WriteUserPort {
@@ -18,17 +16,15 @@ class ChangeUserAdapter implements WriteUserPort {
     }
 
     @Override
-    public ReactiveOptional<User> saveNew(User user) {
+    public User saveNew(User user) {
         UserData userData = UserJpaMapper.toJpaEntity(user);
-        Mono<UserData> userMono = userRepository.save(userData);
-        return ReactiveOptional.of(userMono)
-                .map(UserJpaMapper::toDomain);
+        UserData userDataPersisted = userRepository.save(userData);
+        return UserJpaMapper.toDomain(userDataPersisted);
     }
 
     @Override
-    public ReactiveOptional<Void> deleteById(UserId userId) {
-        Mono<Void> voidMono = userRepository.deleteById(userId.intValue());
-        return ReactiveOptional.of(voidMono);
+    public void deleteById(UserId userId) {
+        userRepository.deleteById(userId.intValue());
     }
 
 

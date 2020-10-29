@@ -4,31 +4,38 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
-@Table("users")
+@Entity
+@Table(name = "users")
 @EqualsAndHashCode
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class UserData {
 
     @Id
-    private final Integer id;
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    private Integer id;
 
-    private final String firstName;
+    private String firstName;
 
-    private final String lastName;
+    private String lastName;
 
-    private final String phone;
-
-    @NotNull
-    private final LocalDateTime createdAt;
+    private String phone;
 
     @NotNull
-    private final LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
+
+    @NotNull
+    private LocalDateTime updatedAt;
 }

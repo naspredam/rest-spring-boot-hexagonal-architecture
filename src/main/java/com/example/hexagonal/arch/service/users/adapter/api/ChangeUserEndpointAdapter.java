@@ -1,7 +1,6 @@
 package com.example.hexagonal.arch.service.users.adapter.api;
 
 import com.example.hexagonal.arch.service.common.annotation.Adapter;
-import com.example.hexagonal.arch.service.common.reactive.ReactiveOptional;
 import com.example.hexagonal.arch.service.users.adapter.api.model.SaveUserBodyDto;
 import com.example.hexagonal.arch.service.users.adapter.api.model.UserDto;
 import com.example.hexagonal.arch.service.users.domain.model.User;
@@ -24,16 +23,16 @@ class ChangeUserEndpointAdapter implements ChangeUserEndpointPort {
     }
 
     @Override
-    public ReactiveOptional<UserDto> saveUser(SaveUserBodyDto saveUserBodyDto) {
+    public UserDto saveUser(SaveUserBodyDto saveUserBodyDto) {
         User user = UserDtoMapper.toDomainFromSaveBody(saveUserBodyDto);
-        return submitNewUserUseCase.saveUser(user)
-                .map(UserDtoMapper::toDto);
+        User userPersisted = submitNewUserUseCase.saveUser(user);
+        return UserDtoMapper.toDto(userPersisted);
     }
 
     @Override
-    public ReactiveOptional<Void> deleteUser(Integer id) {
+    public void deleteUser(Integer id) {
         UserId userId = UserId.of(id);
-        return deleteUsersByIdUseCase.deleteById(userId);
+        deleteUsersByIdUseCase.deleteById(userId);
     }
 
 }
