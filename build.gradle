@@ -1,0 +1,51 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+}
+
+group = 'com.example.hexagonal.arch.service'
+version = '1.0.0'
+sourceCompatibility = '15'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+	implementation 'com.h2database:h2'
+	implementation 'io.r2dbc:r2dbc-h2'
+	implementation 'org.liquibase:liquibase-core'
+
+//	runtimeOnly 'dev.miku:r2dbc-mysql'
+//	runtimeOnly 'mysql:mysql-connector-java'
+
+	implementation 'javax.validation:validation-api:2.0.1.Final'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'io.projectreactor:reactor-test'
+	testImplementation 'org.assertj:assertj-core:3.18.0'
+	testImplementation 'com.tngtech.archunit:archunit-junit5:0.14.1'
+	testImplementation 'com.github.javafaker:javafaker:1.0.2'
+
+	testRuntimeOnly 'com.h2database:h2'
+	testRuntimeOnly 'io.r2dbc:r2dbc-h2'
+}
+
+test {
+	useJUnitPlatform()
+}
