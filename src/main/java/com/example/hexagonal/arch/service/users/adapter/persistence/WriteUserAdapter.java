@@ -7,11 +7,11 @@ import com.example.hexagonal.arch.service.users.domain.model.UserId;
 import com.example.hexagonal.arch.service.users.domain.port.persistence.WriteUserPort;
 
 @Adapter
-class ChangeUserAdapter implements WriteUserPort {
+class WriteUserAdapter implements WriteUserPort {
 
     private final UserRepository userRepository;
 
-    public ChangeUserAdapter(UserRepository userRepository) {
+    public WriteUserAdapter(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

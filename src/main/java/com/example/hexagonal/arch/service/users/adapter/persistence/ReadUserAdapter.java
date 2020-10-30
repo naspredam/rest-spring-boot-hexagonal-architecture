@@ -14,11 +14,11 @@ import static com.example.hexagonal.arch.service.users.domain.model.UserFunction
 import static com.example.hexagonal.arch.service.users.domain.model.UserFunctions.userLastName;
 
 @Adapter
-class SearchUserAdapter implements ReadUserPort {
+class ReadUserAdapter implements ReadUserPort {
 
     private final UserRepository userRepository;
 
-    public SearchUserAdapter(UserRepository userRepository) {
+    public ReadUserAdapter(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

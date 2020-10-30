@@ -12,14 +12,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Adapter
-class SearchUserEndpointAdapter implements FindUserEndpointPort {
+class FindUserEndpointAdapter implements FindUserEndpointPort {
 
     private final FindAllUsersUseCase findAllUsersUseCase;
 
     private final FindUserByIdUseCase findUserByIdUseCase;
 
-    SearchUserEndpointAdapter(FindAllUsersUseCase findAllUsersUseCase,
-                                     FindUserByIdUseCase findUserByIdUseCase) {
+    FindUserEndpointAdapter(FindAllUsersUseCase findAllUsersUseCase,
+                            FindUserByIdUseCase findUserByIdUseCase) {
         this.findAllUsersUseCase = findAllUsersUseCase;
         this.findUserByIdUseCase = findUserByIdUseCase;
     }

@@ -7,8 +7,11 @@ import com.example.hexagonal.arch.service.common.annotation.UseCase;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
@@ -36,12 +39,9 @@ class LayersArchitectureTest {
                     .andShould()
                         .beInterfaces()
                     .andShould()
-                        .beAssignableTo(ReactiveCrudRepository.class)
-                    .andShould()
                         .haveSimpleNameEndingWith("Repository")
                     .andShould()
-                        .resideInAPackage("..adapter.persistence..")
-                    .as("Agreed on the repository structure");
+                        .resideInAPackage("..adapter.persistence..");
 
     @ArchTest
     static final ArchRule adapters_should_have_specific_format =

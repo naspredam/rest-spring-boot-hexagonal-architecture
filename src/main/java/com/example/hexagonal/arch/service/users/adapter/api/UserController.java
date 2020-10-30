@@ -21,12 +21,12 @@ class UserController {
 
     private final ChangeUserEndpointAdapter changeUserEndpointAdapter;
 
-    private final SearchUserEndpointAdapter searchUserEndpointAdapter;
+    private final FindUserEndpointAdapter findUserEndpointAdapter;
 
     UserController(ChangeUserEndpointAdapter changeUserEndpointAdapter,
-                   SearchUserEndpointAdapter searchUserEndpointAdapter) {
+                   FindUserEndpointAdapter findUserEndpointAdapter) {
         this.changeUserEndpointAdapter = changeUserEndpointAdapter;
-        this.searchUserEndpointAdapter = searchUserEndpointAdapter;
+        this.findUserEndpointAdapter = findUserEndpointAdapter;
     }
 
     @PostMapping
@@ -38,13 +38,13 @@ class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Collection<UserDto> fetchAllUsers() {
-        return searchUserEndpointAdapter.fetchAllUsers();
+        return findUserEndpointAdapter.fetchAllUsers();
     }
 
     @GetMapping("/{user_id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDto fetchUserById(@PathVariable("user_id") Integer userId) {
-        return searchUserEndpointAdapter.fetchUserById(userId).orElse(null);
+        return findUserEndpointAdapter.fetchUserById(userId).orElse(null);
     }
 
     @DeleteMapping("/{user_id}")
