@@ -1,4 +1,4 @@
-package com.example.service.common.arch;
+package com.example.service.user.domain.arch;
 
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
@@ -6,7 +6,7 @@ import com.tngtech.archunit.lang.ArchRule;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
-@AnalyzeClasses(packages = "com.service.reactive.hexagonal")
+@AnalyzeClasses(packages = "com.example.service.user")
 class DomainArchitectureTest {
 
     @ArchTest
@@ -15,7 +15,9 @@ class DomainArchitectureTest {
                     .resideInAnyPackage("..domain..")
                     .should()
                         .onlyHaveDependentClassesThat()
-                        .resideInAnyPackage("lombok..", "java..", "javax..", "com.service.reactive.hexagonal..");
+                        .resideInAnyPackage(
+                                "lombok..", "java..", "javax..",
+                                "com.example.service.user..", "com.example.service.common..");
 
     @ArchTest
     static final ArchRule useCaseInterfaces_LivesOnDomain_UnderUseCasePackage =

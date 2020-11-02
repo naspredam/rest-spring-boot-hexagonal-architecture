@@ -7,12 +7,13 @@ import com.example.service.common.annotation.UseCase;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
-@AnalyzeClasses(packages = "com.service.reactive.hexagonal")
+@AnalyzeClasses(packages = "com.example.service.user")
 class LayersArchitectureTest {
 
     @ArchTest
@@ -31,9 +32,11 @@ class LayersArchitectureTest {
             classes().that()
                     .areAnnotatedWith(Repository.class)
                     .should()
-                        .bePackagePrivate()
+                        .bePublic()
                     .andShould()
                         .beInterfaces()
+                    .andShould()
+                        .beAssignableTo(JpaRepository.class)
                     .andShould()
                         .haveSimpleNameEndingWith("Repository")
                     .andShould()

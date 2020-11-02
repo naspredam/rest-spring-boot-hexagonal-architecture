@@ -1,6 +1,5 @@
-package com.example.service.user.domain;
+package com.example.service.user.domain.model;
 
-import com.example.service.user.domain.model.Phone;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

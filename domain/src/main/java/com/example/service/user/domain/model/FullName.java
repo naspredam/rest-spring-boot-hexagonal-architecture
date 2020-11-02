@@ -6,7 +6,7 @@ import lombok.Value;
 
 import javax.validation.constraints.NotNull;
 
-@Getter
+@Getter(AccessLevel.PACKAGE)
 @Value(staticConstructor = "of")
 public class FullName {
 

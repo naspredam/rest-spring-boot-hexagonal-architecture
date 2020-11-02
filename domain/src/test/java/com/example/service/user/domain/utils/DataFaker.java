@@ -1,4 +1,4 @@
-package com.example.service.user.domain;
+package com.example.service.user.domain.utils;
 
 import com.example.service.user.domain.model.FullName;
 import com.example.service.user.domain.model.Phone;

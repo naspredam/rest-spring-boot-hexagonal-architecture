@@ -1,15 +1,8 @@
-package com.example.service.user.domain;
+package com.example.service.user.domain.model;
 
-import com.example.service.user.domain.model.FullName;
-import com.example.service.user.domain.model.Phone;
-import com.example.service.user.domain.model.User;
-import com.example.service.user.domain.model.UserId;
+import com.example.service.user.domain.utils.DataFaker;
 import org.junit.jupiter.api.Test;
 
-import static com.example.service.user.domain.model.UserFunctions.userFirstName;
-import static com.example.service.user.domain.model.UserFunctions.userIdAsInt;
-import static com.example.service.user.domain.model.UserFunctions.userLastName;
-import static com.example.service.user.domain.model.UserFunctions.userPhoneNumber;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class UserFunctionsTest {
@@ -21,7 +14,7 @@ class UserFunctionsTest {
                 .phone(DataFaker.fakePhone())
                 .build();
 
-        assertThat(userIdAsInt.apply(user)).isNull();
+        assertThat(UserFunctions.userIdAsInt.apply(user)).isNull();
     }
 
     @Test
@@ -33,7 +26,7 @@ class UserFunctionsTest {
                 .phone(DataFaker.fakePhone())
                 .build();
 
-        assertThat(userIdAsInt.apply(user)).isEqualTo(userId.intValue());
+        assertThat(UserFunctions.userIdAsInt.apply(user)).isEqualTo(userId.intValue());
     }
 
     @Test
@@ -45,7 +38,7 @@ class UserFunctionsTest {
                 .phone(DataFaker.fakePhone())
                 .build();
 
-        assertThat(userFirstName.apply(user)).isEqualTo(fullName.getFirstName());
+        assertThat(UserFunctions.userFirstName.apply(user)).isEqualTo(fullName.getFirstName());
     }
 
     @Test
@@ -57,7 +50,7 @@ class UserFunctionsTest {
                 .phone(DataFaker.fakePhone())
                 .build();
 
-        assertThat(userLastName.apply(user)).isEqualTo(fullName.getLastName());
+        assertThat(UserFunctions.userLastName.apply(user)).isEqualTo(fullName.getLastName());
     }
 
     @Test
@@ -69,6 +62,6 @@ class UserFunctionsTest {
                 .phone(phone)
                 .build();
 
-        assertThat(userPhoneNumber.apply(user)).isEqualTo(phone.number());
+        assertThat(UserFunctions.userPhoneNumber.apply(user)).isEqualTo(phone.number());
     }
 }

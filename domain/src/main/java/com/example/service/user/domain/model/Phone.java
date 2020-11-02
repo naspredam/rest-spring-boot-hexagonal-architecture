@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Getter
+@Getter(AccessLevel.PACKAGE)
 @Value(staticConstructor = "of")
 public class Phone {
 
