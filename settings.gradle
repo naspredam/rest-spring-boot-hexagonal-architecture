@@ -1,1 +1,3 @@
 rootProject.name = 'rest-spring-boot-hexagonal-arch-users'
+
+include ('common', 'domain', 'application')

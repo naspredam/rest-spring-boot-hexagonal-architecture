@@ -1,42 +1,29 @@
 plugins {
-	id 'org.springframework.boot' version '2.3.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
 }
 
-group = 'com.example.hexagonal.arch.service'
-version = '1.0.0'
-sourceCompatibility = '15'
+subprojects {
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+	apply plugin: 'java'
+	apply plugin: 'java-library'
+	apply plugin: 'io.spring.dependency-management'
+
+	group = 'com.example.service.user'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = '15'
+
+	repositories {
+		mavenCentral()
 	}
-}
 
-repositories {
-	mavenCentral()
-}
+	test {
+		useJUnitPlatform()
+	}
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.liquibase:liquibase-core'
-	implementation 'com.h2database:h2'
-
-	implementation 'javax.validation:validation-api:2.0.1.Final'
-
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.assertj:assertj-core:3.18.0'
-	testImplementation 'com.tngtech.archunit:archunit-junit5:0.14.1'
-	testImplementation 'com.github.javafaker:javafaker:1.0.2'
-}
-
-test {
-	useJUnitPlatform()
+	dependencyManagement {
+		imports {
+			mavenBom('org.springframework.boot:spring-boot-dependencies:2.3.5.RELEASE')
+		}
+	}
 }

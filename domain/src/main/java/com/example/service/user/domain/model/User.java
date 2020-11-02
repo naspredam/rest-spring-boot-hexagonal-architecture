@@ -1,0 +1,22 @@
+package com.example.service.user.domain.model;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+
+@Builder
+@Getter(AccessLevel.PACKAGE)
+public class User implements Serializable {
+
+    private final UserId id;
+
+    @NotNull
+    private final FullName fullName;
+
+    @NotNull
+    private final Phone phone;
+
+}

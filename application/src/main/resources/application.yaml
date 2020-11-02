@@ -1,0 +1,10 @@
+spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          r2dbc: DEBUG
