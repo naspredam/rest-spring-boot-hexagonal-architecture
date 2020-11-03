@@ -25,7 +25,8 @@ class LayersArchitectureTest {
                     .andShould()
                         .haveSimpleNameEndingWith("Controller")
                     .andShould()
-                        .resideInAPackage("..adapter.api..");
+                        .resideInAPackage("..adapter.api..")
+                    .as("The controllers are part of the adapter api");
 
     @ArchTest
     static final ArchRule repositories_should_have_specific_format =
@@ -40,7 +41,8 @@ class LayersArchitectureTest {
                     .andShould()
                         .haveSimpleNameEndingWith("Repository")
                     .andShould()
-                        .resideInAPackage("..adapter.persistence..");
+                        .resideInAPackage("..adapter.persistence..")
+                    .as("Repositories are part of the adapter persistence");
 
     @ArchTest
     static final ArchRule adapters_should_have_specific_format =
@@ -66,7 +68,8 @@ class LayersArchitectureTest {
                         .haveOnlyPrivateConstructors()
                     .andShould()
                         .onlyBeAccessed()
-                        .byClassesThat().areAnnotatedWith(Adapter.class);
+                        .byClassesThat().areAnnotatedWith(Adapter.class)
+                    .as("Mappers should be only be package scope and be called from the adapters");
 
     @ArchTest
     static final ArchRule domainServices_should_bePlacedOnApplication_withCorrectAnnotation =
@@ -81,6 +84,7 @@ class LayersArchitectureTest {
                     .andShould()
                         .implement(simpleNameEndingWith("UseCase"))
                     .andShould()
-                        .accessClassesThat().haveSimpleNameEndingWith("Port");
+                        .accessClassesThat().haveSimpleNameEndingWith("Port")
+                    .as("Use case are our business, implemented as services, and they are based on port integration");
 
 }
