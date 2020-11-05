@@ -7,6 +7,8 @@ public interface ChangeUserEndpointPort {
 
     UserDto saveUser(SaveUserBodyDto saveUserBodyDto);
 
+    UserDto updateUser(Integer id, SaveUserBodyDto saveUserBodyDto);
+
     void deleteUser(Integer userId);
 
 }

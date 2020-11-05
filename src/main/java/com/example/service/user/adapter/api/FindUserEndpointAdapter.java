@@ -26,7 +26,8 @@ class FindUserEndpointAdapter implements FindUserEndpointPort {
 
     @Override
     public Collection<UserDto> fetchAllUsers() {
-        return findAllUsersUseCase.retrieveAllPersisted().stream()
+        return findAllUsersUseCase.retrieveAllPersisted()
+                .stream()
                 .map(UserDtoMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }

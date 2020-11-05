@@ -7,5 +7,7 @@ public interface WriteUserPort {
 
     User saveNew(User user);
 
+    User update(User user);
+
     void deleteById(UserId userId);
 }

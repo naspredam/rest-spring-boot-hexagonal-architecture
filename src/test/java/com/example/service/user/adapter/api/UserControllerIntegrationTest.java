@@ -3,7 +3,6 @@ package com.example.service.user.adapter.api;
 import com.example.service.user.adapter.api.model.SaveUserBodyDto;
 import com.example.service.user.adapter.persistence.UserRepository;
 import com.example.service.user.adapter.persistence.model.UserData;
-import com.example.service.user.domain.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.service.user.domain.UserFunctions.userFirstName;
-import static com.example.service.user.domain.UserFunctions.userLastName;
-import static com.example.service.user.domain.UserFunctions.userPhoneNumber;
-import static com.example.service.user.utils.DataFaker.fakeUser;
+import static com.example.service.user.utils.DataFaker.fakeSaveUserBodyDto;
 import static com.example.service.user.utils.DataFaker.fakeUserData;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -28,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,20 +46,32 @@ class UserControllerIntegrationTest {
 
     @Test
     public void shouldCreateNewUser_OnUsersPostRequest() throws Exception {
-        User user = fakeUser();
-        SaveUserBodyDto saveUserBodyDto = SaveUserBodyDto.of(
-                userFirstName.apply(user),
-                userLastName.apply(user),
-                userPhoneNumber.apply(user));
+        SaveUserBodyDto saveUserBodyDto = fakeSaveUserBodyDto();
 
         mvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(saveUserBodyDto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("first_name", is(userFirstName.apply(user))))
-                .andExpect(jsonPath("last_name", is(userLastName.apply(user))))
-                .andExpect(jsonPath("phone", is(userPhoneNumber.apply(user))));
+                .andExpect(jsonPath("first_name", is(saveUserBodyDto.getFirstName())))
+                .andExpect(jsonPath("last_name", is(saveUserBodyDto.getLastName())))
+                .andExpect(jsonPath("phone", is(saveUserBodyDto.getPhone())));
+    }
+
+    @Test
+    public void shouldUpdateExistingUser_OnUsersPostRequest() throws Exception {
+        UserData userData = fakeUserData().toBuilder().id(null).build();
+        UserData userDataPersisted = userRepository.save(userData);
+        SaveUserBodyDto saveUserBodyDto = fakeSaveUserBodyDto();
+
+        mvc.perform(put("/users/" + userDataPersisted.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(saveUserBodyDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("first_name", is(saveUserBodyDto.getFirstName())))
+                .andExpect(jsonPath("last_name", is(saveUserBodyDto.getLastName())))
+                .andExpect(jsonPath("phone", is(saveUserBodyDto.getPhone())));
     }
 
     @Test

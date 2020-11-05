@@ -32,6 +32,15 @@ class UserJpaMapper {
                 .build();
     }
 
+    static UserData toJpaEntity(User user, UserData persistedUserData) {
+        return persistedUserData.toBuilder()
+                .firstName(userFirstName.apply(user))
+                .lastName(userLastName.apply(user))
+                .phone(userPhoneNumber.apply(user))
+                .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
     static User toDomain(UserData userData) {
         return User.builder()
                 .id(UserId.of(userData.getId()))

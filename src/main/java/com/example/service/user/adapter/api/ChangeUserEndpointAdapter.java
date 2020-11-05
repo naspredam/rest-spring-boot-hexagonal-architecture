@@ -3,6 +3,7 @@ package com.example.service.user.adapter.api;
 import com.example.service.user.adapter.api.model.SaveUserBodyDto;
 import com.example.service.user.adapter.api.model.UserDto;
 import com.example.service.user.application.port.api.ChangeUserEndpointPort;
+import com.example.service.user.application.usecase.ChangeExistingUserUseCase;
 import com.example.service.user.application.usecase.DeleteUsersByIdUseCase;
 import com.example.service.user.application.usecase.SubmitNewUserUseCase;
 import com.example.service.user.domain.User;
@@ -14,11 +15,15 @@ class ChangeUserEndpointAdapter implements ChangeUserEndpointPort {
 
     private final SubmitNewUserUseCase submitNewUserUseCase;
 
+    private final ChangeExistingUserUseCase changeExistingUserUseCase;
+
     private final DeleteUsersByIdUseCase deleteUsersByIdUseCase;
 
     ChangeUserEndpointAdapter(SubmitNewUserUseCase submitNewUserUseCase,
+                              ChangeExistingUserUseCase changeExistingUserUseCase,
                               DeleteUsersByIdUseCase deleteUsersByIdUseCase) {
         this.submitNewUserUseCase = submitNewUserUseCase;
+        this.changeExistingUserUseCase = changeExistingUserUseCase;
         this.deleteUsersByIdUseCase = deleteUsersByIdUseCase;
     }
 
@@ -28,6 +33,14 @@ class ChangeUserEndpointAdapter implements ChangeUserEndpointPort {
         User userPersisted = submitNewUserUseCase.saveUser(user);
         return UserDtoMapper.toDto(userPersisted);
     }
+
+    @Override
+    public UserDto updateUser(Integer id, SaveUserBodyDto saveUserBodyDto) {
+        User user = UserDtoMapper.toDomainFromSaveBody(id, saveUserBodyDto);
+        User userPersisted = changeExistingUserUseCase.updateUser(user);
+        return UserDtoMapper.toDto(userPersisted);
+    }
+
 
     @Override
     public void deleteUser(Integer id) {

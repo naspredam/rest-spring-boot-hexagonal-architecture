@@ -1,5 +1,6 @@
 package com.example.service.user.utils;
 
+import com.example.service.user.adapter.api.model.SaveUserBodyDto;
 import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.domain.FullName;
 import com.example.service.user.domain.Phone;
@@ -55,6 +56,11 @@ public class DataFaker {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+    }
+
+    public static SaveUserBodyDto fakeSaveUserBodyDto() {
+        return SaveUserBodyDto.of(
+                FAKER.name().firstName(), FAKER.name().lastName(), fakePhoneNumberAsString());
     }
 
 }
