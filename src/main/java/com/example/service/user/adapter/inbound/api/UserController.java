@@ -1,7 +1,7 @@
-package com.example.service.user.adapter.api;
+package com.example.service.user.adapter.inbound.api;
 
-import com.example.service.user.adapter.api.model.SaveUserBodyDto;
-import com.example.service.user.adapter.api.model.UserDto;
+import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
+import com.example.service.user.adapter.inbound.api.model.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

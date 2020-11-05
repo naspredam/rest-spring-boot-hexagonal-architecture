@@ -1,6 +1,6 @@
 package com.example.service.user.application.port.api;
 
-import com.example.service.user.adapter.api.model.UserDto;
+import com.example.service.user.adapter.inbound.api.model.UserDto;
 
 import java.util.Collection;
 import java.util.Optional;

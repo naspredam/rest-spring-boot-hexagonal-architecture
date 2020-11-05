@@ -1,8 +1,8 @@
-package com.example.service.user.adapter.api;
+package com.example.service.user.adapter.inbound.api;
 
-import com.example.service.user.adapter.api.model.SaveUserBodyDto;
-import com.example.service.user.adapter.persistence.UserRepository;
-import com.example.service.user.adapter.persistence.model.UserData;
+import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
+import com.example.service.user.adapter.outbound.persistence.UserRepository;
+import com.example.service.user.adapter.outbound.persistence.model.UserData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

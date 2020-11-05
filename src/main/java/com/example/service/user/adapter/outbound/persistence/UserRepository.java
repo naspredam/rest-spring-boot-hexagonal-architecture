@@ -1,6 +1,6 @@
-package com.example.service.user.adapter.persistence;
+package com.example.service.user.adapter.outbound.persistence;
 
-import com.example.service.user.adapter.persistence.model.UserData;
+import com.example.service.user.adapter.outbound.persistence.model.UserData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
