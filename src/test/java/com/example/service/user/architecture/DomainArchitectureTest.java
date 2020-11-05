@@ -10,12 +10,11 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 class DomainArchitectureTest {
 
     @ArchTest
-    static final ArchRule domainPackages_mustNot_haveThirdPartyLibraries =
+    static final ArchRule domainModel_shouldOnlyHave_DependenciesWithBasicLibraries_andItsOwnProject =
             classes().that()
                     .resideInAnyPackage("..domain..")
                     .should()
                         .onlyHaveDependentClassesThat()
-                        .resideInAnyPackage(
-                                "lombok..", "java..", "javax..",
-                                "com.example.service.user..", "com.example.service.common..");
+                        .resideInAnyPackage("java..", "javax..", "lombok..",
+                                "com.example.service.user..");
 }

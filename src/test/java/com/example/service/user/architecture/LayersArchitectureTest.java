@@ -17,7 +17,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 class LayersArchitectureTest {
 
     @ArchTest
-    static final ArchRule controllers_should_have_specific_format =
+    static final ArchRule controllers_areTaggedAndLocatedOnAdapterApi =
             classes().that()
                     .areAnnotatedWith(RestController.class)
                     .should()
@@ -25,11 +25,10 @@ class LayersArchitectureTest {
                     .andShould()
                         .haveSimpleNameEndingWith("Controller")
                     .andShould()
-                        .resideInAPackage("..adapter.api..")
-                    .as("The controllers are part of the adapter api");
+                        .resideInAPackage("..adapter.api..");
 
     @ArchTest
-    static final ArchRule repositories_should_have_specific_format =
+    static final ArchRule repositories_shouldBeLocatedOnAdapterPersistence_AndFollowingStructure =
             classes().that()
                     .areAnnotatedWith(Repository.class)
                     .should()
@@ -41,11 +40,10 @@ class LayersArchitectureTest {
                     .andShould()
                         .haveSimpleNameEndingWith("Repository")
                     .andShould()
-                        .resideInAPackage("..adapter.persistence..")
-                    .as("Repositories are part of the adapter persistence");
+                        .resideInAPackage("..adapter.persistence..");
 
     @ArchTest
-    static final ArchRule adapters_should_have_specific_format =
+    static final ArchRule adapters_shouldBeOnItsPackage_AndExtendingPort =
             classes().that()
                     .areAnnotatedWith(Adapter.class)
                     .should()
@@ -61,7 +59,7 @@ class LayersArchitectureTest {
                                     "java.lang..", "java.util..");
 
     @ArchTest
-    static final ArchRule mappers_should_haveStaticMethods_notBeingInjected_onBeanContext =
+    static final ArchRule mappers_should_bePackageScope_AndOnlyBeAccessedByAdapters =
             classes().that()
                     .areAnnotatedWith(Mapper.class)
                     .should()
@@ -70,11 +68,10 @@ class LayersArchitectureTest {
                         .haveOnlyPrivateConstructors()
                     .andShould()
                         .onlyBeAccessed()
-                        .byClassesThat().areAnnotatedWith(Adapter.class)
-                    .as("Mappers should be only be package scope and be called from the adapters");
+                        .byClassesThat().areAnnotatedWith(Adapter.class);
 
     @ArchTest
-    static final ArchRule domainServices_should_bePlacedOnApplication_withCorrectAnnotation =
+    static final ArchRule services_shouldBeOnApplicationPackage_ImplementUseCase_AndCallPorts =
             classes().that()
                     .areAnnotatedWith(Service.class)
                     .should()
@@ -86,11 +83,10 @@ class LayersArchitectureTest {
                     .andShould()
                         .implement(simpleNameEndingWith("UseCase"))
                     .andShould()
-                        .accessClassesThat().haveSimpleNameEndingWith("Port")
-                    .as("Use case are our business, implemented as services, and they are based on port integration");
+                        .accessClassesThat().haveSimpleNameEndingWith("Port");
 
     @ArchTest
-    static final ArchRule useCaseInterfaces_LivesOnDomain_UnderUseCasePackage =
+    static final ArchRule useCases_shouldBeInProperPackage_AndBeInterfaces =
             classes().that()
                     .haveNameMatching("\\w+UseCase")
                     .should()
@@ -99,7 +95,7 @@ class LayersArchitectureTest {
                         .beInterfaces();
 
     @ArchTest
-    static final ArchRule portInterfaces_LivesOnDomain_UnderUseCasePackage =
+    static final ArchRule ports_shouldBeInProperPackage_AndBeInterfaces =
             classes().that()
                     .haveNameMatching("\\w+Port")
                     .should()

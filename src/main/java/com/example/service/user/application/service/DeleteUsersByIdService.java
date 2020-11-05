@@ -24,11 +24,10 @@ class DeleteUsersByIdService implements DeleteUsersByIdUseCase {
     public void deleteById(UserId userId) {
         ObjectValidator.validate(userId);
 
-        if(readUserPort.existsUserById(userId)) {
-            writeUserPort.deleteById(userId);
-            return;
+        if(!readUserPort.existsUserById(userId)) {
+            throw new IllegalAccessError("User missed on the repository, not able to delete it...");
         }
 
-        throw new IllegalAccessError("User missed on the repository, not able to delete it...");
+        writeUserPort.deleteById(userId);
     }
 }
