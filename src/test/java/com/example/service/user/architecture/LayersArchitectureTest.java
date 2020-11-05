@@ -25,7 +25,7 @@ class LayersArchitectureTest {
                     .andShould()
                         .haveSimpleNameEndingWith("Controller")
                     .andShould()
-                        .resideInAPackage("..adapter.api..");
+                        .resideInAPackage("..adapter.inbound.api..");
 
     @ArchTest
     static final ArchRule repositories_shouldBeLocatedOnAdapterPersistence_AndFollowingStructure =
@@ -40,7 +40,7 @@ class LayersArchitectureTest {
                     .andShould()
                         .haveSimpleNameEndingWith("Repository")
                     .andShould()
-                        .resideInAPackage("..adapter.persistence..");
+                        .resideInAPackage("..adapter.outbound.persistence..");
 
     @ArchTest
     static final ArchRule adapters_shouldBeOnItsPackage_AndExtendingPort =
@@ -79,7 +79,7 @@ class LayersArchitectureTest {
                     .andShould()
                         .bePackagePrivate()
                     .andShould()
-                        .resideInAnyPackage("..application..")
+                        .resideInAnyPackage("..application.service..")
                     .andShould()
                         .implement(simpleNameEndingWith("UseCase"))
                     .andShould()

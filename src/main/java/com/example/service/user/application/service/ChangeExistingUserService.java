@@ -7,7 +7,7 @@ import com.example.service.user.infrastructure.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ChangeExistingUserService implements ChangeExistingUserUseCase {
+class ChangeExistingUserService implements ChangeExistingUserUseCase {
 
     private final WriteUserPort writeUserPort;
 
