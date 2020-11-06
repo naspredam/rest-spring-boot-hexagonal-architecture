@@ -1,4 +1,4 @@
-package com.example.service.user.application.port.api;
+package com.example.service.user.application.port.inbound.api;
 
 import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
 import com.example.service.user.adapter.inbound.api.model.UserDto;

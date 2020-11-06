@@ -1,7 +1,7 @@
 package com.example.service.user.adapter.outbound.persistence;
 
 import com.example.service.user.adapter.outbound.persistence.model.UserData;
-import com.example.service.user.application.port.persistence.WriteUserPort;
+import com.example.service.user.application.port.outbound.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;

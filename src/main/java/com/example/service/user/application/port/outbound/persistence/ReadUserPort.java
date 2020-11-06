@@ -1,4 +1,4 @@
-package com.example.service.user.application.port.persistence;
+package com.example.service.user.application.port.outbound.persistence;
 
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;

@@ -1,6 +1,6 @@
 package com.example.service.user.application.service;
 
-import com.example.service.user.application.port.persistence.WriteUserPort;
+import com.example.service.user.application.port.outbound.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

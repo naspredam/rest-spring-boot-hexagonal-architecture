@@ -1,7 +1,7 @@
 package com.example.service.user.adapter.inbound.api;
 
 import com.example.service.user.adapter.inbound.api.model.UserDto;
-import com.example.service.user.application.port.api.FindUserEndpointPort;
+import com.example.service.user.application.port.inbound.api.FindUserEndpointPort;
 import com.example.service.user.application.usecase.FindAllUsersUseCase;
 import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.User;
