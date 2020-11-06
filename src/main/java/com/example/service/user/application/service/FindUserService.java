@@ -8,8 +8,8 @@ import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 class FindUserService implements FindUserByIdUseCase, FindAllUsersUseCase {
@@ -21,13 +21,14 @@ class FindUserService implements FindUserByIdUseCase, FindAllUsersUseCase {
     }
 
     @Override
-    public Optional<User> findById(UserId userId) {
+    public User findById(UserId userId) {
         ObjectValidator.validate(userId);
-        return readUserPort.fetchById(userId);
+        return readUserPort.fetchById(userId)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public Collection<User> retrieveAllPersisted() {
+    public Collection<User> fetchAllPersisted() {
         return readUserPort.fetchAll();
     }
 

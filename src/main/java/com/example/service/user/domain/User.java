@@ -7,7 +7,7 @@ import lombok.Getter;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-@Builder
+@Builder(toBuilder = true)
 @Getter(AccessLevel.PACKAGE)
 public class User implements Serializable {
 

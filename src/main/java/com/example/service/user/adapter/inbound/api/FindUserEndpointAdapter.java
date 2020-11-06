@@ -4,11 +4,11 @@ import com.example.service.user.adapter.inbound.api.model.UserDto;
 import com.example.service.user.application.port.api.FindUserEndpointPort;
 import com.example.service.user.application.usecase.FindAllUsersUseCase;
 import com.example.service.user.application.usecase.FindUserByIdUseCase;
+import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Adapter
@@ -18,25 +18,28 @@ class FindUserEndpointAdapter implements FindUserEndpointPort {
 
     private final FindUserByIdUseCase findUserByIdUseCase;
 
+    private final UserDtoMapper userDtoMapper;
+
     FindUserEndpointAdapter(FindAllUsersUseCase findAllUsersUseCase,
-                            FindUserByIdUseCase findUserByIdUseCase) {
+                            FindUserByIdUseCase findUserByIdUseCase,
+                            UserDtoMapper userDtoMapper) {
         this.findAllUsersUseCase = findAllUsersUseCase;
         this.findUserByIdUseCase = findUserByIdUseCase;
+        this.userDtoMapper = userDtoMapper;
+    }
+
+    @Override
+    public UserDto fetchUserById(Integer id) {
+        UserId userId = UserId.of(id);
+        User user = findUserByIdUseCase.findById(userId);
+        return userDtoMapper.toDto(user);
     }
 
     @Override
     public Collection<UserDto> fetchAllUsers() {
-        return findAllUsersUseCase.retrieveAllPersisted()
+        return findAllUsersUseCase.fetchAllPersisted()
                 .stream()
-                .map(UserDtoMapper::toDto)
+                .map(userDtoMapper::toDto)
                 .collect(Collectors.toUnmodifiableList());
     }
-
-    @Override
-    public Optional<UserDto> fetchUserById(Integer id) {
-        UserId userId = UserId.of(id);
-        return findUserByIdUseCase.findById(userId)
-                .map(UserDtoMapper::toDto);
-    }
-
 }

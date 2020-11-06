@@ -19,26 +19,30 @@ class ChangeUserEndpointAdapter implements ChangeUserEndpointPort {
 
     private final DeleteUsersByIdUseCase deleteUsersByIdUseCase;
 
+    private final UserDtoMapper userDtoMapper;
+
     ChangeUserEndpointAdapter(SubmitNewUserUseCase submitNewUserUseCase,
                               ChangeExistingUserUseCase changeExistingUserUseCase,
-                              DeleteUsersByIdUseCase deleteUsersByIdUseCase) {
+                              DeleteUsersByIdUseCase deleteUsersByIdUseCase,
+                              UserDtoMapper userDtoMapper) {
         this.submitNewUserUseCase = submitNewUserUseCase;
         this.changeExistingUserUseCase = changeExistingUserUseCase;
         this.deleteUsersByIdUseCase = deleteUsersByIdUseCase;
+        this.userDtoMapper = userDtoMapper;
     }
 
     @Override
     public UserDto saveUser(SaveUserBodyDto saveUserBodyDto) {
-        User user = UserDtoMapper.toDomainFromSaveBody(saveUserBodyDto);
+        User user = userDtoMapper.toDomainFromSaveBody(saveUserBodyDto);
         User userPersisted = submitNewUserUseCase.saveUser(user);
-        return UserDtoMapper.toDto(userPersisted);
+        return userDtoMapper.toDto(userPersisted);
     }
 
     @Override
     public UserDto updateUser(Integer id, SaveUserBodyDto saveUserBodyDto) {
-        User user = UserDtoMapper.toDomainFromSaveBody(id, saveUserBodyDto);
+        User user = userDtoMapper.toDomainFromSaveBody(id, saveUserBodyDto);
         User userPersisted = changeExistingUserUseCase.updateUser(user);
-        return UserDtoMapper.toDto(userPersisted);
+        return userDtoMapper.toDto(userPersisted);
     }
 
 

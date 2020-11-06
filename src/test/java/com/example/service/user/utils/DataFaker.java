@@ -1,6 +1,7 @@
 package com.example.service.user.utils;
 
 import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
+import com.example.service.user.adapter.inbound.api.model.UserDto;
 import com.example.service.user.adapter.outbound.persistence.model.UserData;
 import com.example.service.user.domain.FullName;
 import com.example.service.user.domain.Phone;
@@ -23,7 +24,7 @@ public class DataFaker {
         return UserId.of(fakeUserIdAsInt());
     }
 
-    private static int fakeUserIdAsInt() {
+    public static int fakeUserIdAsInt() {
         return FAKER.number().numberBetween(1, 10000);
     }
 
@@ -39,22 +40,38 @@ public class DataFaker {
         return FAKE_VALUES_SERVICE.regexify("\\(\\+[1-9]\\d{1,2}\\) [0-9]{1,3}[0-9\\-]{6,9}[0-9]{1}");
     }
 
-    public static User fakeUser() {
+    public static User.UserBuilder fakeUserBuilder() {
         return User.builder()
                 .id(DataFaker.fakeUserId())
                 .fullName(fakeFullName())
-                .phone(DataFaker.fakePhone())
+                .phone(DataFaker.fakePhone());
+    }
+
+    public static User fakeUser() {
+        return fakeUserBuilder()
                 .build();
     }
 
-    public static UserData fakeUserData() {
+    public static UserData.UserDataBuilder fakeUserDataBuilder() {
         return UserData.builder()
                 .id(fakeUserIdAsInt())
                 .firstName(FAKER.name().firstName())
                 .lastName(FAKER.name().lastName())
                 .phone(fakePhoneNumberAsString())
                 .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now());
+    }
+
+    public static UserData fakeUserData() {
+        return fakeUserDataBuilder()
+                .build();
+    }
+
+    public static UserDto fakeUserDto() {
+        return UserDto.builder()
+                .firstName(FAKER.name().firstName())
+                .lastName(FAKER.name().lastName())
+                .phone(fakePhoneNumberAsString())
                 .build();
     }
 

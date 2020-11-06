@@ -43,16 +43,10 @@ class UserController {
         return changeUserEndpointAdapter.updateUser(userId, saveUserBodyDto);
     }
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public Collection<UserDto> fetchAllUsers() {
-        return findUserEndpointAdapter.fetchAllUsers();
-    }
-
     @GetMapping("/{user_id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDto fetchUserById(@PathVariable("user_id") Integer userId) {
-        return findUserEndpointAdapter.fetchUserById(userId).orElse(null);
+        return findUserEndpointAdapter.fetchUserById(userId);
     }
 
     @DeleteMapping("/{user_id}")
@@ -60,4 +54,11 @@ class UserController {
     public void deleteUserById(@PathVariable("user_id") Integer userId) {
         changeUserEndpointAdapter.deleteUser(userId);
     }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<UserDto> fetchAllUsers() {
+        return findUserEndpointAdapter.fetchAllUsers();
+    }
+
 }

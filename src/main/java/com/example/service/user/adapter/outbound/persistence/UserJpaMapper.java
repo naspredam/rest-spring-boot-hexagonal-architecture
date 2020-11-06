@@ -17,11 +17,11 @@ import static com.example.service.user.domain.UserFunctions.userPhoneNumber;
 @Mapper
 class UserJpaMapper {
 
-    private UserJpaMapper() {
+    UserJpaMapper() {
         super();
     }
 
-    static UserData toJpaEntity(User user) {
+    UserData toJpaEntity(User user) {
         return UserData.builder()
                 .id(userIdAsInt.apply(user))
                 .firstName(userFirstName.apply(user))
@@ -32,7 +32,7 @@ class UserJpaMapper {
                 .build();
     }
 
-    static UserData toJpaEntity(User user, UserData persistedUserData) {
+    UserData toJpaEntity(User user, UserData persistedUserData) {
         return persistedUserData.toBuilder()
                 .firstName(userFirstName.apply(user))
                 .lastName(userLastName.apply(user))
@@ -41,7 +41,7 @@ class UserJpaMapper {
                 .build();
     }
 
-    static User toDomain(UserData userData) {
+    User toDomain(UserData userData) {
         return User.builder()
                 .id(UserId.of(userData.getId()))
                 .fullName(FullName.of(userData.getFirstName(), null, userData.getLastName()))

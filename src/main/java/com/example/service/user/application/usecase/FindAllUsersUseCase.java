@@ -6,5 +6,5 @@ import java.util.Collection;
 
 public interface FindAllUsersUseCase {
 
-    Collection<User> retrieveAllPersisted();
+    Collection<User> fetchAllPersisted();
 }

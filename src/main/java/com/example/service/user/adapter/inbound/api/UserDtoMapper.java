@@ -15,11 +15,11 @@ import static com.example.service.user.domain.UserFunctions.userPhoneNumber;
 @Mapper
 class UserDtoMapper {
 
-    private UserDtoMapper() {
+    UserDtoMapper() {
         super();
     }
 
-    static UserDto toDto(User user) {
+    UserDto toDto(User user) {
         return UserDto.builder()
                 .firstName(userFirstName.apply(user))
                 .lastName(userLastName.apply(user))
@@ -27,14 +27,14 @@ class UserDtoMapper {
                 .build();
     }
 
-    static User toDomainFromSaveBody(SaveUserBodyDto saveUserBodyDto) {
+    User toDomainFromSaveBody(SaveUserBodyDto saveUserBodyDto) {
         return User.builder()
                 .fullName(FullName.of(saveUserBodyDto.getFirstName(), null, saveUserBodyDto.getLastName()))
                 .phone(Phone.of(saveUserBodyDto.getPhone()))
                 .build();
     }
 
-    static User toDomainFromSaveBody(Integer userId, SaveUserBodyDto saveUserBodyDto) {
+    User toDomainFromSaveBody(Integer userId, SaveUserBodyDto saveUserBodyDto) {
         return User.builder()
                 .id(UserId.of(userId))
                 .fullName(FullName.of(saveUserBodyDto.getFirstName(), null, saveUserBodyDto.getLastName()))

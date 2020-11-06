@@ -25,7 +25,7 @@ class SubmitNewUserService implements SubmitNewUserUseCase {
         ObjectValidator.validate(user);
 
         if (readUserPort.existsUserByName(user)) {
-            throw new IllegalAccessError("User duplicated...");
+            throw new IllegalArgumentException("User duplicated...");
         }
 
         return writeUserPort.saveNew(user);

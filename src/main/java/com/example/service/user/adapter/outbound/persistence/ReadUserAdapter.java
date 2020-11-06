@@ -1,6 +1,5 @@
 package com.example.service.user.adapter.outbound.persistence;
 
-import com.example.service.user.adapter.outbound.persistence.model.UserData;
 import com.example.service.user.application.port.persistence.ReadUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
@@ -18,31 +17,36 @@ class ReadUserAdapter implements ReadUserPort {
 
     private final UserRepository userRepository;
 
-    public ReadUserAdapter(UserRepository userRepository) {
+    private final UserJpaMapper userJpaMapper;
+
+    public ReadUserAdapter(UserRepository userRepository, UserJpaMapper userJpaMapper) {
         this.userRepository = userRepository;
+        this.userJpaMapper = userJpaMapper;
     }
 
     @Override
     public boolean existsUserByName(User user) {
-        Collection<UserData> byFirstNameAndLastName = userRepository.findByFirstNameAndLastName(userFirstName.apply(user), userLastName.apply(user));
-        return !byFirstNameAndLastName.isEmpty();
+        String firstName = userFirstName.apply(user);
+        String lastName = userLastName.apply(user);
+        return userRepository.existsByFirstNameAndLastName(firstName, lastName);
     }
 
     @Override
     public boolean existsUserById(UserId userId) {
-        return userRepository.existsById(userId.intValue());
+        Integer userIdAsInt = userId.intValue();
+        return userRepository.existsById(userIdAsInt);
     }
 
     @Override
     public Optional<User> fetchById(UserId userId) {
         return userRepository.findById(userId.intValue())
-                .map(UserJpaMapper::toDomain);
+                .map(userJpaMapper::toDomain);
     }
 
     @Override
     public Collection<User> fetchAll() {
         return userRepository.findAll().stream()
-                .map(UserJpaMapper::toDomain)
+                .map(userJpaMapper::toDomain)
                 .collect(Collectors.toUnmodifiableList());
     }
 }

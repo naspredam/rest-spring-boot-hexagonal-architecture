@@ -6,7 +6,7 @@ import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 
 import static com.example.service.user.domain.UserFunctions.userIdAsInt;
 
@@ -15,25 +15,27 @@ class WriteUserAdapter implements WriteUserPort {
 
     private final UserRepository userRepository;
 
-    public WriteUserAdapter(UserRepository userRepository) {
+    private final UserJpaMapper userJpaMapper;
+
+    public WriteUserAdapter(UserRepository userRepository, UserJpaMapper userJpaMapper) {
         this.userRepository = userRepository;
+        this.userJpaMapper = userJpaMapper;
     }
 
     @Override
     public User saveNew(User user) {
-        UserData userData = UserJpaMapper.toJpaEntity(user);
+        UserData userData = userJpaMapper.toJpaEntity(user);
         UserData userDataPersisted = userRepository.save(userData);
-        return UserJpaMapper.toDomain(userDataPersisted);
+        return userJpaMapper.toDomain(userDataPersisted);
     }
 
     @Override
-    public User update(User user) {
+    public Optional<User> update(User user) {
         int userId = userIdAsInt.apply(user);
-        UserData persistedUserData = userRepository.findById(userId)
-                .orElseThrow(EntityNotFoundException::new);
-        UserData userDataToPersist = UserJpaMapper.toJpaEntity(user, persistedUserData);
-        UserData userDataPersisted = userRepository.save(userDataToPersist);
-        return UserJpaMapper.toDomain(userDataPersisted);
+        return userRepository.findById(userId)
+                .map(persistedUserData -> userJpaMapper.toJpaEntity(user, persistedUserData))
+                .map(userRepository::save)
+                .map(userJpaMapper::toDomain);
     }
 
     @Override

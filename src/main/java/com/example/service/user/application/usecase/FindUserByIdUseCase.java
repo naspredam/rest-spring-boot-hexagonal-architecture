@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface FindUserByIdUseCase {
 
-    Optional<User> findById(UserId userId);
+    User findById(UserId userId);
 }
