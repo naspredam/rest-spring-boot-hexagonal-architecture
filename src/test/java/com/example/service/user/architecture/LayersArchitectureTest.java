@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameContaining;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
@@ -65,10 +66,9 @@ class LayersArchitectureTest {
                     .should()
                         .bePackagePrivate()
                     .andShould()
-                        .haveOnlyPrivateConstructors()
-                    .andShould()
                         .onlyBeAccessed()
-                        .byClassesThat().areAnnotatedWith(Adapter.class);
+                        .byClassesThat(simpleNameContaining("Adapter")
+                                .or(simpleNameContaining("Mapper")));
 
     @ArchTest
     static final ArchRule services_shouldBeOnApplicationPackage_ImplementUseCase_AndCallPorts =
