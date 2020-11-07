@@ -1,15 +1,16 @@
 package com.example.service.user.application.service;
 
-
 import com.example.service.user.application.port.outbound.persistence.ReadUserPort;
 import com.example.service.user.application.port.outbound.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 import javax.validation.ConstraintViolationException;
 
@@ -44,10 +45,12 @@ class SubmitNewUserServiceTest {
     public void shouldThrowException_whenUserNameIsAlreadyPersisted_AvoidingDuplicates() {
         User user = fakeUserBuilder().build();
 
-        Mockito.when(readUserPort.existsUserByName(user)).thenReturn(true);
+        Mockito.when(readUserPort.existsUserByName(user)).thenReturn(SingleReactive.of(Mono.just(true)));
 
-        assertThatThrownBy(() -> submitNewUserService.saveUser(user))
+        SingleReactive<User> userSingleReactive = submitNewUserService.saveUser(user);
+        assertThatThrownBy(() -> userSingleReactive.mono().blockOptional())
                 .isInstanceOf(IllegalArgumentException.class);
+
         Mockito.verify(writeUserPort, Mockito.never()).saveNew(Mockito.any());
         Mockito.verify(readUserPort, Mockito.times(1)).existsUserByName(Mockito.any());
     }
@@ -57,11 +60,12 @@ class SubmitNewUserServiceTest {
         User user = fakeUserBuilder().build();
         User savedUser = user.toBuilder().id(fakeUserId()).build();
 
-        Mockito.when(readUserPort.existsUserByName(user)).thenReturn(false);
-        Mockito.when(writeUserPort.saveNew(user)).thenReturn(savedUser);
+        Mockito.when(readUserPort.existsUserByName(user)).thenReturn(SingleReactive.of(Mono.just(false)));
+        Mockito.when(writeUserPort.saveNew(user)).thenReturn(SingleReactive.of(Mono.just(savedUser)));
 
-        User submittedUser = submitNewUserService.saveUser(user);
-        assertThat(submittedUser).isEqualTo(savedUser);
+        SingleReactive<User> userSingleReactive = submitNewUserService.saveUser(user);
+        assertThat(userSingleReactive.mono().blockOptional()).isPresent().contains(savedUser);
+
         Mockito.verify(writeUserPort, Mockito.times(1)).saveNew(Mockito.any());
         Mockito.verify(readUserPort, Mockito.times(1)).existsUserByName(Mockito.any());
     }

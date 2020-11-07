@@ -1,10 +1,9 @@
 package com.example.service.user.application.usecase;
 
 import com.example.service.user.domain.User;
-
-import java.util.Collection;
+import com.example.service.user.infrastructure.reactive.CollectionReactive;
 
 public interface FindAllUsersUseCase {
 
-    Collection<User> fetchAllPersisted();
+    CollectionReactive<User> fetchAllPersisted();
 }

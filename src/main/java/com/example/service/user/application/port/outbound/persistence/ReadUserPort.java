@@ -2,17 +2,19 @@ package com.example.service.user.application.port.outbound.persistence;
 
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
+import com.example.service.user.infrastructure.reactive.CollectionReactive;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public interface ReadUserPort {
 
-    boolean existsUserByName(User user);
+    SingleReactive<Boolean> existsUserByName(User user);
 
-    boolean existsUserById(UserId userId);
+    SingleReactive<Boolean> existsUserById(UserId userId);
 
-    Optional<User> fetchById(UserId userId);
+    SingleReactive<User> fetchById(UserId userId);
 
-    Collection<User> fetchAll();
+    CollectionReactive<User> fetchAll();
 }

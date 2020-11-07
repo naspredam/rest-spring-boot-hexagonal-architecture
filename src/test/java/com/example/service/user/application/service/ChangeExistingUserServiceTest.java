@@ -2,17 +2,16 @@ package com.example.service.user.application.service;
 
 import com.example.service.user.application.port.outbound.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
-
-import java.util.Optional;
 
 import static com.example.service.user.utils.DataFaker.fakeUserBuilder;
 import static com.example.service.user.utils.DataFaker.fakeUserId;
@@ -38,13 +37,13 @@ class ChangeExistingUserServiceTest {
     }
 
     @Test
-    public void shouldThrowException_whenUserIsNotFound() {
+    public void shouldReturnEmpty_whenUserIsNotFound() {
         User user = fakeUserBuilder().build();
 
-        Mockito.when(writeUserPort.update(user)).thenReturn(Optional.empty());
+        Mockito.when(writeUserPort.update(user)).thenReturn(SingleReactive.of(Mono.empty()));
 
-        assertThatThrownBy(() -> changeExistingUserService.updateUser(user))
-                .isInstanceOf(EntityNotFoundException.class);
+        SingleReactive<User> userSingleReactive = changeExistingUserService.updateUser(user);
+        assertThat(userSingleReactive.mono().blockOptional()).isEmpty();
         Mockito.verify(writeUserPort, Mockito.times(1)).update(Mockito.any());
     }
 
@@ -53,10 +52,10 @@ class ChangeExistingUserServiceTest {
         User user = fakeUserBuilder().id(null).build();
 
         User userFromPort = user.toBuilder().id(fakeUserId()).build();
-        Mockito.when(writeUserPort.update(user)).thenReturn(Optional.of(userFromPort));
+        Mockito.when(writeUserPort.update(user)).thenReturn(SingleReactive.of(Mono.just(userFromPort)));
 
-        User updatedUser = changeExistingUserService.updateUser(user);
-        assertThat(updatedUser).isEqualTo(userFromPort);
+        SingleReactive<User> userSingleReactive = changeExistingUserService.updateUser(user);
+        assertThat(userSingleReactive.mono().block()).isEqualTo(userFromPort);
     }
 
 }

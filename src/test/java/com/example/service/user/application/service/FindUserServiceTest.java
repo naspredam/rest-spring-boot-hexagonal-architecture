@@ -3,19 +3,20 @@ package com.example.service.user.application.service;
 import com.example.service.user.application.port.outbound.persistence.ReadUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
+import com.example.service.user.infrastructure.reactive.CollectionReactive;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 import static com.example.service.user.utils.DataFaker.fakeUser;
 import static com.example.service.user.utils.DataFaker.fakeUserId;
@@ -44,10 +45,10 @@ class FindUserServiceTest {
     public void shouldReturnEmptyByIdUser_whenNotFound() {
         UserId userId = fakeUserId();
 
-        Mockito.when(readUserPort.fetchById(userId)).thenReturn(Optional.empty());
+        Mockito.when(readUserPort.fetchById(userId)).thenReturn(SingleReactive.of(Mono.empty()));
 
-        assertThatThrownBy(() -> findUserService.findById(userId))
-                .isInstanceOf(EntityNotFoundException.class);
+        SingleReactive<User> byId = findUserService.findById(userId);
+        assertThat(byId.mono().blockOptional()).isEmpty();
         Mockito.verify(readUserPort, Mockito.times(1)).fetchById(Mockito.any());
     }
 
@@ -56,18 +57,19 @@ class FindUserServiceTest {
         UserId userId = fakeUserId();
         User userFromPort = fakeUser();
 
-        Mockito.when(readUserPort.fetchById(userId)).thenReturn(Optional.of(userFromPort));
+        Mockito.when(readUserPort.fetchById(userId)).thenReturn(SingleReactive.of(Mono.just(userFromPort)));
 
-        User byId = findUserService.findById(userId);
-        assertThat(byId).isEqualTo(userFromPort);
+        SingleReactive<User> byId = findUserService.findById(userId);
+        assertThat(byId.mono().block()).isEqualTo(userFromPort);
         Mockito.verify(readUserPort, Mockito.times(1)).fetchById(Mockito.any());
     }
 
     @Test
     public void shouldReturnEmpty_whenNoUsersFound() {
-        Mockito.when(readUserPort.fetchAll()).thenReturn(List.of());
+        Mockito.when(readUserPort.fetchAll()).thenReturn(CollectionReactive.of(Flux.empty()));
 
-        Collection<User> users = findUserService.fetchAllPersisted();
+        CollectionReactive<User> userCollectionReactive = findUserService.fetchAllPersisted();
+        Collection<User> users = userCollectionReactive.flux().collectList().block();
         assertThat(users).isEmpty();
     }
 
@@ -75,11 +77,12 @@ class FindUserServiceTest {
     public void shouldReturnUserList_whenUsersPersisted() {
         User user1 = fakeUser();
         User user2 = fakeUser();
-        List<User> userList = List.of(user1, user2);
+        CollectionReactive<User> userList = CollectionReactive.of(Flux.just(user1, user2));
 
         Mockito.when(readUserPort.fetchAll()).thenReturn(userList);
 
-        Collection<User> users = findUserService.fetchAllPersisted();
+        CollectionReactive<User> userCollectionReactive = findUserService.fetchAllPersisted();
+        Collection<User> users = userCollectionReactive.flux().collectList().block();
         assertThat(users).hasSize(2).containsExactlyInAnyOrder(user1, user2);
     }
 

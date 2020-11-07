@@ -9,6 +9,7 @@ import com.example.service.user.application.usecase.SubmitNewUserUseCase;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 
 @Adapter
 class ChangeUserEndpointAdapter implements ChangeUserEndpointPort {
@@ -32,24 +33,24 @@ class ChangeUserEndpointAdapter implements ChangeUserEndpointPort {
     }
 
     @Override
-    public UserDto saveUser(SaveUserBodyDto saveUserBodyDto) {
+    public SingleReactive<UserDto> saveUser(SaveUserBodyDto saveUserBodyDto) {
         User user = userDtoMapper.toDomainFromSaveBody(saveUserBodyDto);
-        User userPersisted = submitNewUserUseCase.saveUser(user);
-        return userDtoMapper.toDto(userPersisted);
+        return submitNewUserUseCase.saveUser(user)
+                .map(userDtoMapper::toDto);
     }
 
     @Override
-    public UserDto updateUser(Integer id, SaveUserBodyDto saveUserBodyDto) {
+    public SingleReactive<UserDto> updateUser(Integer id, SaveUserBodyDto saveUserBodyDto) {
         User user = userDtoMapper.toDomainFromSaveBody(id, saveUserBodyDto);
-        User userPersisted = changeExistingUserUseCase.updateUser(user);
-        return userDtoMapper.toDto(userPersisted);
+        return changeExistingUserUseCase.updateUser(user)
+                .map(userDtoMapper::toDto);
     }
 
 
     @Override
-    public void deleteUser(Integer id) {
+    public SingleReactive<Void> deleteUser(Integer id) {
         UserId userId = UserId.of(id);
-        deleteUsersByIdUseCase.deleteById(userId);
+        return deleteUsersByIdUseCase.deleteById(userId);
     }
 
 }

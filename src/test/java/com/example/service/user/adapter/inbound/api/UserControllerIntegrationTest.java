@@ -3,118 +3,107 @@ package com.example.service.user.adapter.inbound.api;
 import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
 import com.example.service.user.adapter.outbound.persistence.UserRepository;
 import com.example.service.user.adapter.outbound.persistence.model.UserData;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.transaction.reactive.TransactionalOperator;
+import org.springframework.web.reactive.function.BodyInserters;
 
 import java.util.List;
 
 import static com.example.service.user.utils.DataFaker.fakeSaveUserBodyDto;
 import static com.example.service.user.utils.DataFaker.fakeUserData;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@AutoConfigureMockMvc
-@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerIntegrationTest {
 
     @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private WebTestClient webClient;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TransactionalOperator transactionalOperator;
+
+    @BeforeEach
+    public void setUp() {
+        transactionalOperator.transactional(userRepository.deleteAll()).block();
+    }
+
     @Test
-    public void shouldCreateNewUser_OnUsersPostRequest() throws Exception {
+    public void shouldCreateNewUser_OnUsersPostRequest() {
         SaveUserBodyDto saveUserBodyDto = fakeSaveUserBodyDto();
 
-        mvc.perform(post("/users")
+        webClient.post()
+                .uri("/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(saveUserBodyDto)))
-                .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("first_name", is(saveUserBodyDto.getFirstName())))
-                .andExpect(jsonPath("last_name", is(saveUserBodyDto.getLastName())))
-                .andExpect(jsonPath("phone", is(saveUserBodyDto.getPhone())));
+                .body(BodyInserters.fromValue(saveUserBodyDto))
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("first_name").isEqualTo(saveUserBodyDto.getFirstName())
+                .jsonPath("last_name").isEqualTo(saveUserBodyDto.getLastName())
+                .jsonPath("phone").isEqualTo(saveUserBodyDto.getPhone());
     }
 
     @Test
-    public void shouldUpdateExistingUser_OnUsersPostRequest() throws Exception {
+    public void shouldRetrieveUserById_whenPrePopulatedOnTheDatabase() {
         UserData userData = fakeUserData().toBuilder().id(null).build();
-        UserData userDataPersisted = userRepository.save(userData);
-        SaveUserBodyDto saveUserBodyDto = fakeSaveUserBodyDto();
+        UserData userDataPersisted = transactionalOperator.transactional(userRepository.save(userData))
+                .block();
 
-        mvc.perform(put("/users/" + userDataPersisted.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(saveUserBodyDto)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("first_name", is(saveUserBodyDto.getFirstName())))
-                .andExpect(jsonPath("last_name", is(saveUserBodyDto.getLastName())))
-                .andExpect(jsonPath("phone", is(saveUserBodyDto.getPhone())));
+        webClient.get()
+                .uri("/users/" + userDataPersisted.getId())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("first_name").isEqualTo(userData.getFirstName())
+                .jsonPath("last_name").isEqualTo(userData.getLastName())
+                .jsonPath("phone").isEqualTo(userData.getPhone());
     }
 
     @Test
-    public void shouldRetrieveUserById_whenPrePopulatedOnTheDatabase() throws Exception {
-        UserData userData = fakeUserData().toBuilder().id(null).build();
-        UserData userDataPersisted = userRepository.save(userData);
-
-        mvc.perform(get("/users/" + userDataPersisted.getId()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("first_name", is(userData.getFirstName())))
-                .andExpect(jsonPath("last_name", is(userData.getLastName())))
-                .andExpect(jsonPath("phone", is(userData.getPhone())));
-    }
-
-    @Test
-    public void shouldRetrieveAllUsers_whenPrePopulatedOnTheDatabase() throws Exception {
+    public void shouldRetrieveAllUsers_whenPrePopulatedOnTheDatabase() {
         UserData userData1 = fakeUserData().toBuilder().id(null).build();
         UserData userData2 = fakeUserData().toBuilder().id(null).build();
-        userRepository.saveAll(List.of(userData1, userData2));
+        transactionalOperator.transactional(userRepository.saveAll(List.of(userData1, userData2)))
+                .blockLast();
 
-        mvc.perform(get("/users"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.*", hasSize(2)))
-                .andExpect(jsonPath("$[0].first_name", is(userData1.getFirstName())))
-                .andExpect(jsonPath("$[1].first_name", is(userData2.getFirstName())))
-                .andExpect(jsonPath("$[0].last_name", is(userData1.getLastName())))
-                .andExpect(jsonPath("$[1].last_name", is(userData2.getLastName())))
-                .andExpect(jsonPath("$[0].phone", is(userData1.getPhone())))
-                .andExpect(jsonPath("$[1].phone", is(userData2.getPhone())));
+        webClient.get()
+                .uri("/users")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.length()").isEqualTo(2)
+                .jsonPath("$[0].first_name").isEqualTo(userData1.getFirstName())
+                .jsonPath("$[1].first_name").isEqualTo(userData2.getFirstName())
+                .jsonPath("$[0].last_name").isEqualTo(userData1.getLastName())
+                .jsonPath("$[1].last_name").isEqualTo(userData2.getLastName())
+                .jsonPath("$[0].phone").isEqualTo(userData1.getPhone())
+                .jsonPath("$[1].phone").isEqualTo(userData2.getPhone());
     }
 
     @Test
-    public void shouldHardDeleteUser_whenPrePopulatedOnTheDatabase() throws Exception {
+    public void shouldHardDeleteUser_whenPrePopulatedOnTheDatabase() {
         UserData userData = fakeUserData().toBuilder().id(null).build();
-        UserData userDataPersisted = userRepository.save(userData);
+        UserData userDataPersisted = transactionalOperator.transactional(userRepository.save(userData))
+                .block();
 
-        mvc.perform(delete("/users/" + userDataPersisted.getId()))
-                .andDo(print())
-                .andExpect(status().isNoContent());
+        webClient.delete()
+                .uri("/users/" + userDataPersisted.getId())
+                .exchange()
+                .expectStatus().isNoContent();
 
-        Boolean userExists = userRepository.existsById(userDataPersisted.getId());
+        Boolean userExists = userRepository.existsById(userDataPersisted.getId()).block();
         assertThat(userExists).isFalse();
     }
+
 }

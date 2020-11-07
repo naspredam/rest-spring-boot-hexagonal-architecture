@@ -1,12 +1,12 @@
 package com.example.service.user.application.port.inbound.api;
 
 import com.example.service.user.adapter.inbound.api.model.UserDto;
-
-import java.util.Collection;
+import com.example.service.user.infrastructure.reactive.CollectionReactive;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 
 public interface FindUserEndpointPort {
 
-    Collection<UserDto> fetchAllUsers();
+    CollectionReactive<UserDto> fetchAllUsers();
 
-    UserDto fetchUserById(Integer userId);
+    SingleReactive<UserDto> fetchUserById(Integer userId);
 }

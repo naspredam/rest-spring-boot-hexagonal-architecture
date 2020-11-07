@@ -2,13 +2,14 @@ package com.example.service.user.application.port.inbound.api;
 
 import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
 import com.example.service.user.adapter.inbound.api.model.UserDto;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 
 public interface ChangeUserEndpointPort {
 
-    UserDto saveUser(SaveUserBodyDto saveUserBodyDto);
+    SingleReactive<UserDto> saveUser(SaveUserBodyDto saveUserBodyDto);
 
-    UserDto updateUser(Integer id, SaveUserBodyDto saveUserBodyDto);
+    SingleReactive<UserDto> updateUser(Integer id, SaveUserBodyDto saveUserBodyDto);
 
-    void deleteUser(Integer userId);
+    SingleReactive<Void> deleteUser(Integer userId);
 
 }

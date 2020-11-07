@@ -3,12 +3,14 @@ package com.example.service.user.adapter.outbound.persistence;
 import com.example.service.user.adapter.outbound.persistence.model.UserData;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
@@ -40,11 +42,11 @@ class WriteUserAdapterTest {
         User persistedUser = fakeUser();
 
         Mockito.when(userJpaMapper.toJpaEntity(newUser)).thenReturn(newUserDataMapped);
-        Mockito.when(userRepository.save(newUserDataMapped)).thenReturn(persistedUserData);
+        Mockito.when(userRepository.save(newUserDataMapped)).thenReturn(Mono.just(persistedUserData));
         Mockito.when(userJpaMapper.toDomain(persistedUserData)).thenReturn(persistedUser);
 
-        User user = writeUserAdapter.saveNew(newUser);
-        assertThat(user).isEqualTo(persistedUser);
+        SingleReactive<User> userSingleReactive = writeUserAdapter.saveNew(newUser);
+        assertThat(userSingleReactive.mono().block()).isEqualTo(persistedUser);
     }
 
     @Test
@@ -52,10 +54,10 @@ class WriteUserAdapterTest {
         User userToUpdate = fakeUser();
 
         Mockito.when(userRepository.findById(userIdAsInt.apply(userToUpdate)))
-                .thenReturn(Optional.empty());
+                .thenReturn(Mono.empty());
 
-        Optional<User> userChanged = writeUserAdapter.update(userToUpdate);
-        assertThat(userChanged).isEmpty();
+        SingleReactive<User> update = writeUserAdapter.update(userToUpdate);
+        assertThat(update.mono().blockOptional()).isEmpty();
 
         Mockito.verify(userRepository, Mockito.never()).save(Mockito.any());
     }
@@ -69,24 +71,27 @@ class WriteUserAdapterTest {
         User updatedUser = fakeUser();
 
         Mockito.when(userRepository.findById(userIdAsInt.apply(userToUpdate)))
-                .thenReturn(Optional.of(persistedUserData));
+                .thenReturn(Mono.just(persistedUserData));
         Mockito.when(userJpaMapper.toJpaEntity(userToUpdate, persistedUserData))
                 .thenReturn(updatedUserFromDataMapped);
         Mockito.when(userRepository.save(updatedUserFromDataMapped))
-                .thenReturn(updatedUserFromData);
+                .thenReturn(Mono.just(updatedUserFromData));
         Mockito.when(userJpaMapper.toDomain(updatedUserFromData))
                 .thenReturn(updatedUser);
 
 
-        Optional<User> userChanged = writeUserAdapter.update(userToUpdate);
-        assertThat(userChanged).isPresent().contains(updatedUser);
+        SingleReactive<User> update = writeUserAdapter.update(userToUpdate);
+        assertThat(update.mono().blockOptional()).isPresent().contains(updatedUser);
     }
 
     @Test
     public void shouldApplyDeleteUserById() {
         UserId userId = fakeUserId();
 
-        writeUserAdapter.deleteById(userId);
+        Mockito.when(userRepository.deleteById(userId.intValue())).thenReturn(Mono.empty());
+
+        SingleReactive<Void> voidSingleReactive = writeUserAdapter.deleteById(userId);
+        voidSingleReactive.mono().block();
 
         Mockito.verify(userRepository).deleteById(userId.intValue());
     }

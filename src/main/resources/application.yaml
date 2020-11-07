@@ -1,3 +1,17 @@
 spring:
   jackson:
     property-naming-strategy: SNAKE_CASE
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+      use-new-id-generator-mappings: false
+    generate-ddl: on
+  liquibase:
+    url: jdbc:h2:file:./h2/app.db
+    user: sa
+    password: ''
+  r2dbc:
+    url: r2dbc:h2:file:///./h2/app.db
+    username: sa
+    password: ''

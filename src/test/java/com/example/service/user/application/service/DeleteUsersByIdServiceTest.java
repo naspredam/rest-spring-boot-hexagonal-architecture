@@ -3,16 +3,19 @@ package com.example.service.user.application.service;
 import com.example.service.user.application.port.outbound.persistence.ReadUserPort;
 import com.example.service.user.application.port.outbound.persistence.WriteUserPort;
 import com.example.service.user.domain.UserId;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 import javax.validation.ConstraintViolationException;
 
 import static com.example.service.user.utils.DataFaker.fakeUserId;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,9 +44,10 @@ class DeleteUsersByIdServiceTest {
     public void shouldThrowException_whenUserDoesNotExists() {
         UserId userId = fakeUserId();
 
-        Mockito.when(readUserPort.existsUserById(userId)).thenReturn(false);
-        assertThatThrownBy(() -> deleteUsersByIdService.deleteById(userId))
-                .isInstanceOf(IllegalArgumentException.class);
+        Mockito.when(readUserPort.existsUserById(userId)).thenReturn(SingleReactive.of(Mono.just(false)));
+        SingleReactive<Void> voidSingleReactive = deleteUsersByIdService.deleteById(userId);
+        assertThatThrownBy(() -> voidSingleReactive.mono().blockOptional())
+            .isInstanceOf(IllegalArgumentException.class);
 
         Mockito.verify(writeUserPort, Mockito.never()).deleteById(Mockito.any());
         Mockito.verify(readUserPort, Mockito.times(1)).existsUserById(Mockito.any());
@@ -53,9 +57,11 @@ class DeleteUsersByIdServiceTest {
     public void shouldApplyDeleteAction_whenUserExistsAndValidUserIdProvided() {
         UserId userId = fakeUserId();
 
-        Mockito.when(readUserPort.existsUserById(userId)).thenReturn(true);
+        Mockito.when(readUserPort.existsUserById(userId)).thenReturn(SingleReactive.of(Mono.just(true)));
+        Mockito.when(writeUserPort.deleteById(userId)).thenReturn(SingleReactive.of(Mono.empty()));
 
-        deleteUsersByIdService.deleteById(userId);
+        SingleReactive<Void> voidSingleReactive = deleteUsersByIdService.deleteById(userId);
+        voidSingleReactive.mono().block();
 
         Mockito.verify(writeUserPort, Mockito.times(1)).deleteById(Mockito.any());
         Mockito.verify(readUserPort, Mockito.times(1)).existsUserById(Mockito.any());

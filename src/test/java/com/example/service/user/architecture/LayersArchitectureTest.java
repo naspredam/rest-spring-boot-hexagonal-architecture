@@ -5,7 +5,7 @@ import com.example.service.user.infrastructure.annotations.Mapper;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +37,7 @@ class LayersArchitectureTest {
                     .andShould()
                         .beInterfaces()
                     .andShould()
-                        .beAssignableTo(JpaRepository.class)
+                        .beAssignableTo(ReactiveCrudRepository.class)
                     .andShould()
                         .haveSimpleNameEndingWith("Repository")
                     .andShould()
@@ -56,8 +56,8 @@ class LayersArchitectureTest {
                     .andShould()
                         .onlyAccessClassesThat()
                             .resideInAnyPackage(
-                                    "..adapter..", "..application.usecase..", "..domain..",
-                                    "java.lang..", "java.util..");
+                                    "..adapter..", "..application.usecase..", "..domain..", "..infrastructure..",
+                                    "java.lang..", "java.util..", "reactor.core..");
 
     @ArchTest
     static final ArchRule mappers_should_bePackageScope_AndOnlyBeAccessedByAdapters =

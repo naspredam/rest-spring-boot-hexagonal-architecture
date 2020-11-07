@@ -5,12 +5,16 @@ import com.example.service.user.application.usecase.FindAllUsersUseCase;
 import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
+import com.example.service.user.infrastructure.reactive.CollectionReactive;
+import com.example.service.user.infrastructure.reactive.SingleReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,20 +44,24 @@ class FindUserEndpointAdapterTest {
         int userIdInt = fakeUserIdAsInt();
         UserId userId = UserId.of(userIdInt);
         User user = fakeUser();
+        SingleReactive<User> userSingleReactive = SingleReactive.of(Mono.just(user));
         UserDto userDto = fakeUserDto();
 
-        Mockito.when(findUserByIdUseCase.findById(userId)).thenReturn(user);
+        Mockito.when(findUserByIdUseCase.findById(userId)).thenReturn(userSingleReactive);
         Mockito.when(userDtoMapper.toDto(user)).thenReturn(userDto);
 
-        UserDto returnUserDto = findUserEndpointAdapter.fetchUserById(userIdInt);
-        assertThat(returnUserDto).isEqualTo(userDto);
+        SingleReactive<UserDto> userDtoSingleReactive = findUserEndpointAdapter.fetchUserById(userIdInt);
+        assertThat(userDtoSingleReactive.mono().block()).isEqualTo(userDto);
     }
 
     @Test
     public void shouldReturnEmpty_whenThereIsNoUserPersisted() {
-        Mockito.when(findAllUsersUseCase.fetchAllPersisted()).thenReturn(List.of());
+        CollectionReactive<User> userCollectionReactive = CollectionReactive.of(Flux.empty());
 
-        Collection<UserDto> userDtos = findUserEndpointAdapter.fetchAllUsers();
+        Mockito.when(findAllUsersUseCase.fetchAllPersisted()).thenReturn(userCollectionReactive);
+
+        CollectionReactive<UserDto> userDtoCollectionReactive = findUserEndpointAdapter.fetchAllUsers();
+        List<UserDto> userDtos = userDtoCollectionReactive.flux().collectList().block();
         assertThat(userDtos).isEmpty();
     }
 
@@ -61,14 +69,17 @@ class FindUserEndpointAdapterTest {
     public void shouldListOfUsers_whenUsersArePersisted() {
         User user1 = fakeUser();
         User user2 = fakeUser();
+        CollectionReactive<User> userCollectionReactive = CollectionReactive.of(Flux.just(user1, user2));
+
         UserDto userDto1 = fakeUserDto();
         UserDto userDto2 = fakeUserDto();
 
-        Mockito.when(findAllUsersUseCase.fetchAllPersisted()).thenReturn(List.of(user1, user2));
+        Mockito.when(findAllUsersUseCase.fetchAllPersisted()).thenReturn(userCollectionReactive);
         Mockito.when(userDtoMapper.toDto(user1)).thenReturn(userDto1);
         Mockito.when(userDtoMapper.toDto(user2)).thenReturn(userDto2);
 
-        Collection<UserDto> userDtos = findUserEndpointAdapter.fetchAllUsers();
+        CollectionReactive<UserDto> userDtoCollectionReactive = findUserEndpointAdapter.fetchAllUsers();
+        List<UserDto> userDtos = userDtoCollectionReactive.flux().collectList().block();
         assertThat(userDtos).hasSize(2).containsExactlyInAnyOrder(userDto1, userDto2);
     }
 
