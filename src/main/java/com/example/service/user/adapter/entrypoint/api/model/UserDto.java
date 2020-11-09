@@ -1,4 +1,4 @@
-package com.example.service.user.adapter.inbound.api.model;
+package com.example.service.user.adapter.entrypoint.api.model;
 
 import lombok.Builder;
 import lombok.Getter;

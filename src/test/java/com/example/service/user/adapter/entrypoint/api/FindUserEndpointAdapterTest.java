@@ -1,6 +1,6 @@
-package com.example.service.user.adapter.inbound.api;
+package com.example.service.user.adapter.entrypoint.api;
 
-import com.example.service.user.adapter.inbound.api.model.UserDto;
+import com.example.service.user.adapter.entrypoint.api.model.UserDto;
 import com.example.service.user.application.usecase.FindAllUsersUseCase;
 import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.User;
@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Collection;
 import java.util.List;
 
 import static com.example.service.user.utils.DataFaker.fakeUser;

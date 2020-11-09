@@ -1,6 +1,6 @@
-package com.example.service.user.adapter.outbound.persistence;
+package com.example.service.user.adapter.persistence;
 
-import com.example.service.user.adapter.outbound.persistence.model.UserData;
+import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;

@@ -1,4 +1,4 @@
-package com.example.service.user.adapter.outbound.persistence.model;
+package com.example.service.user.adapter.persistence.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

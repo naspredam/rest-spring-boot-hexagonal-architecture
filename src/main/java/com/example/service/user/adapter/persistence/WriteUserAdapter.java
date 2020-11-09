@@ -1,14 +1,12 @@
-package com.example.service.user.adapter.outbound.persistence;
+package com.example.service.user.adapter.persistence;
 
-import com.example.service.user.adapter.outbound.persistence.model.UserData;
+import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.application.port.outbound.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
 import com.example.service.user.infrastructure.reactive.SingleReactive;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 import static com.example.service.user.domain.UserFunctions.userIdAsInt;
 

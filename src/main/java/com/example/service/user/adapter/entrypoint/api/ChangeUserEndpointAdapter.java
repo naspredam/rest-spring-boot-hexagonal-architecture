@@ -1,7 +1,7 @@
-package com.example.service.user.adapter.inbound.api;
+package com.example.service.user.adapter.entrypoint.api;
 
-import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
-import com.example.service.user.adapter.inbound.api.model.UserDto;
+import com.example.service.user.adapter.entrypoint.api.model.SaveUserBodyDto;
+import com.example.service.user.adapter.entrypoint.api.model.UserDto;
 import com.example.service.user.application.port.inbound.api.ChangeUserEndpointPort;
 import com.example.service.user.application.usecase.ChangeExistingUserUseCase;
 import com.example.service.user.application.usecase.DeleteUsersByIdUseCase;

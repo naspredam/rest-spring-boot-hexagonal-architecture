@@ -1,6 +1,6 @@
-package com.example.service.user.adapter.outbound.persistence;
+package com.example.service.user.adapter.persistence;
 
-import com.example.service.user.adapter.outbound.persistence.model.UserData;
+import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.application.port.outbound.persistence.ReadUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
@@ -9,10 +9,6 @@ import com.example.service.user.infrastructure.reactive.CollectionReactive;
 import com.example.service.user.infrastructure.reactive.SingleReactive;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.example.service.user.domain.UserFunctions.userFirstName;
 import static com.example.service.user.domain.UserFunctions.userLastName;

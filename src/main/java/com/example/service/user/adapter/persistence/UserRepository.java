@@ -1,6 +1,6 @@
-package com.example.service.user.adapter.outbound.persistence;
+package com.example.service.user.adapter.persistence;
 
-import com.example.service.user.adapter.outbound.persistence.model.UserData;
+import com.example.service.user.adapter.persistence.model.UserData;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;

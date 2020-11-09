@@ -1,8 +1,8 @@
 package com.example.service.user.utils;
 
-import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
-import com.example.service.user.adapter.inbound.api.model.UserDto;
-import com.example.service.user.adapter.outbound.persistence.model.UserData;
+import com.example.service.user.adapter.entrypoint.api.model.SaveUserBodyDto;
+import com.example.service.user.adapter.entrypoint.api.model.UserDto;
+import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.domain.FullName;
 import com.example.service.user.domain.Phone;
 import com.example.service.user.domain.User;

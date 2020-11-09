@@ -1,9 +1,8 @@
-package com.example.service.user.adapter.inbound.api;
+package com.example.service.user.adapter.entrypoint.api;
 
-import com.example.service.user.adapter.inbound.api.model.SaveUserBodyDto;
-import com.example.service.user.adapter.inbound.api.model.UserDto;
+import com.example.service.user.adapter.entrypoint.api.model.SaveUserBodyDto;
+import com.example.service.user.adapter.entrypoint.api.model.UserDto;
 import com.example.service.user.domain.User;
-import com.example.service.user.domain.UserId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
