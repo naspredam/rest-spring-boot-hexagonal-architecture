@@ -1,6 +1,6 @@
 package com.example.service.user.application.service;
 
-import com.example.service.user.application.port.outbound.persistence.ReadUserPort;
+import com.example.service.user.application.port.persistence.ReadUserPort;
 import com.example.service.user.application.usecase.FindAllUsersUseCase;
 import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.User;

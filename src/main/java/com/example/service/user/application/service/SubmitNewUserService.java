@@ -1,7 +1,7 @@
 package com.example.service.user.application.service;
 
-import com.example.service.user.application.port.outbound.persistence.ReadUserPort;
-import com.example.service.user.application.port.outbound.persistence.WriteUserPort;
+import com.example.service.user.application.port.persistence.ReadUserPort;
+import com.example.service.user.application.port.persistence.WriteUserPort;
 import com.example.service.user.application.usecase.SubmitNewUserUseCase;
 import com.example.service.user.domain.User;
 import com.example.service.user.infrastructure.reactive.SingleReactive;

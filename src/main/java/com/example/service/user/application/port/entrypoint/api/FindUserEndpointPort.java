@@ -1,4 +1,4 @@
-package com.example.service.user.application.port.inbound.api;
+package com.example.service.user.application.port.entrypoint.api;
 
 import com.example.service.user.adapter.entrypoint.api.model.UserDto;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;
