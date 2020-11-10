@@ -86,6 +86,6 @@ org.springframework.transaction.reactive.TransactionalOperator
 We can see its use on the test:
 
 ```text
-com.example.service.user.adapter.inbound.api.UserControllerIntegrationTest
-com.example.service.user.adapter.outbound.persistence.UserRepositoryTest
+com.example.service.user.adapter.entrypoint.api.UserControllerIntegrationTest
+com.example.service.user.adapter.persistence.UserRepositoryTest
 ```
