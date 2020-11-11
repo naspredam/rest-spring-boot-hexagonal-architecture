@@ -2,7 +2,7 @@ package com.example.service.user.application.service;
 
 import com.example.service.user.application.port.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,10 +40,10 @@ class ChangeExistingUserServiceTest {
     public void shouldReturnEmpty_whenUserIsNotFound() {
         User user = fakeUserBuilder().build();
 
-        Mockito.when(writeUserPort.update(user)).thenReturn(SingleReactive.of(Mono.empty()));
+        Mockito.when(writeUserPort.update(user)).thenReturn(UnitReactive.of(Mono.empty()));
 
-        SingleReactive<User> userSingleReactive = changeExistingUserService.updateUser(user);
-        assertThat(userSingleReactive.mono().blockOptional()).isEmpty();
+        UnitReactive<User> userUnitReactive = changeExistingUserService.updateUser(user);
+        assertThat(userUnitReactive.mono().blockOptional()).isEmpty();
         Mockito.verify(writeUserPort, Mockito.times(1)).update(Mockito.any());
     }
 
@@ -52,10 +52,10 @@ class ChangeExistingUserServiceTest {
         User user = fakeUserBuilder().id(null).build();
 
         User userFromPort = user.toBuilder().id(fakeUserId()).build();
-        Mockito.when(writeUserPort.update(user)).thenReturn(SingleReactive.of(Mono.just(userFromPort)));
+        Mockito.when(writeUserPort.update(user)).thenReturn(UnitReactive.of(Mono.just(userFromPort)));
 
-        SingleReactive<User> userSingleReactive = changeExistingUserService.updateUser(user);
-        assertThat(userSingleReactive.mono().block()).isEqualTo(userFromPort);
+        UnitReactive<User> userUnitReactive = changeExistingUserService.updateUser(user);
+        assertThat(userUnitReactive.mono().block()).isEqualTo(userFromPort);
     }
 
 }

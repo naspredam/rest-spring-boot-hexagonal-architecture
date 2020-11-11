@@ -2,15 +2,13 @@ package com.example.service.user.application.port.persistence;
 
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
-
-import java.util.Optional;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 
 public interface WriteUserPort {
 
-    SingleReactive<User> saveNew(User user);
+    UnitReactive<User> saveNew(User user);
 
-    SingleReactive<User> update(User user);
+    UnitReactive<User> update(User user);
 
-    SingleReactive<Void> deleteById(UserId userId);
+    UnitReactive<Void> deleteById(UserId userId);
 }

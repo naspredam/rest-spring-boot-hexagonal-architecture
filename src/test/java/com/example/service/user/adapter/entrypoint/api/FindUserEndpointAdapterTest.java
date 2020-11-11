@@ -6,7 +6,7 @@ import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,14 +43,14 @@ class FindUserEndpointAdapterTest {
         int userIdInt = fakeUserIdAsInt();
         UserId userId = UserId.of(userIdInt);
         User user = fakeUser();
-        SingleReactive<User> userSingleReactive = SingleReactive.of(Mono.just(user));
+        UnitReactive<User> userUnitReactive = UnitReactive.of(Mono.just(user));
         UserDto userDto = fakeUserDto();
 
-        Mockito.when(findUserByIdUseCase.findById(userId)).thenReturn(userSingleReactive);
+        Mockito.when(findUserByIdUseCase.findById(userId)).thenReturn(userUnitReactive);
         Mockito.when(userDtoMapper.toDto(user)).thenReturn(userDto);
 
-        SingleReactive<UserDto> userDtoSingleReactive = findUserEndpointAdapter.fetchUserById(userIdInt);
-        assertThat(userDtoSingleReactive.mono().block()).isEqualTo(userDto);
+        UnitReactive<UserDto> userDtoUnitReactive = findUserEndpointAdapter.fetchUserById(userIdInt);
+        assertThat(userDtoUnitReactive.mono().block()).isEqualTo(userDto);
     }
 
     @Test

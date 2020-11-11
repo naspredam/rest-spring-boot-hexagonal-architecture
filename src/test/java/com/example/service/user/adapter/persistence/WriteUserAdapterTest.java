@@ -3,7 +3,7 @@ package com.example.service.user.adapter.persistence;
 import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,8 +43,8 @@ class WriteUserAdapterTest {
         Mockito.when(userRepository.save(newUserDataMapped)).thenReturn(Mono.just(persistedUserData));
         Mockito.when(userJpaMapper.toDomain(persistedUserData)).thenReturn(persistedUser);
 
-        SingleReactive<User> userSingleReactive = writeUserAdapter.saveNew(newUser);
-        assertThat(userSingleReactive.mono().block()).isEqualTo(persistedUser);
+        UnitReactive<User> userUnitReactive = writeUserAdapter.saveNew(newUser);
+        assertThat(userUnitReactive.mono().block()).isEqualTo(persistedUser);
     }
 
     @Test
@@ -54,7 +54,7 @@ class WriteUserAdapterTest {
         Mockito.when(userRepository.findById(userIdAsInt.apply(userToUpdate)))
                 .thenReturn(Mono.empty());
 
-        SingleReactive<User> update = writeUserAdapter.update(userToUpdate);
+        UnitReactive<User> update = writeUserAdapter.update(userToUpdate);
         assertThat(update.mono().blockOptional()).isEmpty();
 
         Mockito.verify(userRepository, Mockito.never()).save(Mockito.any());
@@ -78,7 +78,7 @@ class WriteUserAdapterTest {
                 .thenReturn(updatedUser);
 
 
-        SingleReactive<User> update = writeUserAdapter.update(userToUpdate);
+        UnitReactive<User> update = writeUserAdapter.update(userToUpdate);
         assertThat(update.mono().blockOptional()).isPresent().contains(updatedUser);
     }
 
@@ -88,8 +88,8 @@ class WriteUserAdapterTest {
 
         Mockito.when(userRepository.deleteById(userId.intValue())).thenReturn(Mono.empty());
 
-        SingleReactive<Void> voidSingleReactive = writeUserAdapter.deleteById(userId);
-        voidSingleReactive.mono().block();
+        UnitReactive<Void> voidUnitReactive = writeUserAdapter.deleteById(userId);
+        voidUnitReactive.mono().block();
 
         Mockito.verify(userRepository).deleteById(userId.intValue());
     }

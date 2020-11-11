@@ -4,7 +4,7 @@ import com.example.service.user.application.port.persistence.ReadUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,9 +45,9 @@ class FindUserServiceTest {
     public void shouldReturnEmptyByIdUser_whenNotFound() {
         UserId userId = fakeUserId();
 
-        Mockito.when(readUserPort.fetchById(userId)).thenReturn(SingleReactive.of(Mono.empty()));
+        Mockito.when(readUserPort.fetchById(userId)).thenReturn(UnitReactive.of(Mono.empty()));
 
-        SingleReactive<User> byId = findUserService.findById(userId);
+        UnitReactive<User> byId = findUserService.findById(userId);
         assertThat(byId.mono().blockOptional()).isEmpty();
         Mockito.verify(readUserPort, Mockito.times(1)).fetchById(Mockito.any());
     }
@@ -57,9 +57,9 @@ class FindUserServiceTest {
         UserId userId = fakeUserId();
         User userFromPort = fakeUser();
 
-        Mockito.when(readUserPort.fetchById(userId)).thenReturn(SingleReactive.of(Mono.just(userFromPort)));
+        Mockito.when(readUserPort.fetchById(userId)).thenReturn(UnitReactive.of(Mono.just(userFromPort)));
 
-        SingleReactive<User> byId = findUserService.findById(userId);
+        UnitReactive<User> byId = findUserService.findById(userId);
         assertThat(byId.mono().block()).isEqualTo(userFromPort);
         Mockito.verify(readUserPort, Mockito.times(1)).fetchById(Mockito.any());
     }

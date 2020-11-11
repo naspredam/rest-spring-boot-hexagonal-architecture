@@ -1,9 +1,9 @@
 package com.example.service.user.application.usecase;
 
 import com.example.service.user.domain.User;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 
 public interface SubmitNewUserUseCase {
 
-    SingleReactive<User> saveUser(User user);
+    UnitReactive<User> saveUser(User user);
 }

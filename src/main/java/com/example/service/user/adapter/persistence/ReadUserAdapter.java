@@ -6,7 +6,7 @@ import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -26,25 +26,25 @@ class ReadUserAdapter implements ReadUserPort {
     }
 
     @Override
-    public SingleReactive<Boolean> existsUserByName(User user) {
+    public UnitReactive<Boolean> existsUserByName(User user) {
         String firstName = userFirstName.apply(user);
         String lastName = userLastName.apply(user);
         Mono<Boolean> booleanMono = userRepository.findByFirstNameAndLastName(firstName, lastName)
                     .hasElements();
-        return SingleReactive.of(booleanMono);
+        return UnitReactive.of(booleanMono);
     }
 
     @Override
-    public SingleReactive<Boolean> existsUserById(UserId userId) {
+    public UnitReactive<Boolean> existsUserById(UserId userId) {
         Integer userIdAsInt = userId.intValue();
         Mono<Boolean> booleanMono = userRepository.existsById(userIdAsInt);
-        return SingleReactive.of(booleanMono);
+        return UnitReactive.of(booleanMono);
     }
 
     @Override
-    public SingleReactive<User> fetchById(UserId userId) {
+    public UnitReactive<User> fetchById(UserId userId) {
         Mono<UserData> byId = userRepository.findById(userId.intValue());
-        return SingleReactive.of(byId)
+        return UnitReactive.of(byId)
                 .map(userJpaMapper::toDomain);
     }
 

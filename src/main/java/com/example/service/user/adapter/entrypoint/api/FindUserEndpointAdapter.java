@@ -7,7 +7,7 @@ import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 
 @Adapter
 class FindUserEndpointAdapter implements FindUserEndpointPort {
@@ -27,7 +27,7 @@ class FindUserEndpointAdapter implements FindUserEndpointPort {
     }
 
     @Override
-    public SingleReactive<UserDto> fetchUserById(Integer id) {
+    public UnitReactive<UserDto> fetchUserById(Integer id) {
         UserId userId = UserId.of(id);
         return findUserByIdUseCase.findById(userId)
                 .map(userDtoMapper::toDto);

@@ -4,7 +4,7 @@ import com.example.service.user.application.port.persistence.ReadUserPort;
 import com.example.service.user.application.port.persistence.WriteUserPort;
 import com.example.service.user.application.usecase.DeleteUsersByIdUseCase;
 import com.example.service.user.domain.UserId;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import com.example.service.user.infrastructure.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +22,12 @@ class DeleteUsersByIdService implements DeleteUsersByIdUseCase {
     }
 
     @Override
-    public SingleReactive<Void> deleteById(UserId userId) {
+    public UnitReactive<Void> deleteById(UserId userId) {
         ObjectValidator.validate(userId);
 
         return readUserPort.existsUserById(userId)
                 .flatMap(userExists -> userExists ?
                         writeUserPort.deleteById(userId) :
-                        SingleReactive.error(new IllegalArgumentException("User missed on the repository, not able to delete it...")));
+                        UnitReactive.error(new IllegalArgumentException("User missed on the repository, not able to delete it...")));
     }
 }

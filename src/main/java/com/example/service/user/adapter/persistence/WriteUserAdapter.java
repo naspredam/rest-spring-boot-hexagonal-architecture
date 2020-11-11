@@ -5,7 +5,7 @@ import com.example.service.user.application.port.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import reactor.core.publisher.Mono;
 
 import static com.example.service.user.domain.UserFunctions.userIdAsInt;
@@ -23,27 +23,27 @@ class WriteUserAdapter implements WriteUserPort {
     }
 
     @Override
-    public SingleReactive<User> saveNew(User user) {
+    public UnitReactive<User> saveNew(User user) {
         UserData userData = userJpaMapper.toJpaEntity(user);
         Mono<User> userMono = userRepository.save(userData)
                 .map(userJpaMapper::toDomain);
-        return SingleReactive.of(userMono);
+        return UnitReactive.of(userMono);
     }
 
     @Override
-    public SingleReactive<User> update(User user) {
+    public UnitReactive<User> update(User user) {
         int userId = userIdAsInt.apply(user);
         Mono<UserData> userMono = userRepository.findById(userId)
                 .map(persistedUserData -> userJpaMapper.toJpaEntity(user, persistedUserData))
                 .flatMap(userRepository::save);
-        return SingleReactive.of(userMono)
+        return UnitReactive.of(userMono)
                 .map(userJpaMapper::toDomain);
     }
 
     @Override
-    public SingleReactive<Void> deleteById(UserId userId) {
+    public UnitReactive<Void> deleteById(UserId userId) {
         Mono<Void> voidMono = userRepository.deleteById(userId.intValue());
-        return SingleReactive.of(voidMono);
+        return UnitReactive.of(voidMono);
     }
 
 

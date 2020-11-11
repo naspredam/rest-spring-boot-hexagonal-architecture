@@ -4,7 +4,7 @@ import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,8 +47,8 @@ class ReadUserAdapterTest {
         Mockito.when(userRepository.findByFirstNameAndLastName(firstName, lastName))
                 .thenReturn(Flux.just(UserData.builder().build()));
 
-        SingleReactive<Boolean> userFoundSingleReactive = readUserAdapter.existsUserByName(user);
-        assertThat(userFoundSingleReactive.mono().block()).isTrue();
+        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserByName(user);
+        assertThat(userFoundUnitReactive.mono().block()).isTrue();
     }
 
     @Test
@@ -60,8 +60,8 @@ class ReadUserAdapterTest {
         Mockito.when(userRepository.findByFirstNameAndLastName(firstName, lastName))
                 .thenReturn(Flux.empty());
 
-        SingleReactive<Boolean> userFoundSingleReactive = readUserAdapter.existsUserByName(user);
-        assertThat(userFoundSingleReactive.mono().block()).isFalse();
+        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserByName(user);
+        assertThat(userFoundUnitReactive.mono().block()).isFalse();
     }
 
     @Test
@@ -72,8 +72,8 @@ class ReadUserAdapterTest {
         Mockito.when(userRepository.existsById(userId))
                 .thenReturn(Mono.just(true));
 
-        SingleReactive<Boolean> userFoundSingleReactive = readUserAdapter.existsUserById(UserId.of(userId));
-        assertThat(userFoundSingleReactive.mono().block()).isTrue();
+        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserById(UserId.of(userId));
+        assertThat(userFoundUnitReactive.mono().block()).isTrue();
     }
 
     @Test
@@ -84,8 +84,8 @@ class ReadUserAdapterTest {
         Mockito.when(userRepository.existsById(userId))
                 .thenReturn(Mono.just(false));
 
-        SingleReactive<Boolean> userFoundSingleReactive = readUserAdapter.existsUserById(UserId.of(userId));
-        assertThat(userFoundSingleReactive.mono().block()).isFalse();
+        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserById(UserId.of(userId));
+        assertThat(userFoundUnitReactive.mono().block()).isFalse();
     }
 
     @Test
@@ -95,7 +95,7 @@ class ReadUserAdapterTest {
         Mockito.when(userRepository.findById(userId.intValue()))
                 .thenReturn(Mono.empty());
 
-        SingleReactive<User> userOptional = readUserAdapter.fetchById(userId);
+        UnitReactive<User> userOptional = readUserAdapter.fetchById(userId);
         assertThat(userOptional.mono().blockOptional()).isEmpty();
     }
 
@@ -109,8 +109,8 @@ class ReadUserAdapterTest {
                 .thenReturn(Mono.just(foundUserData));
         Mockito.when(userJpaMapper.toDomain(foundUserData)).thenReturn(user);
 
-        SingleReactive<User> userSingleReactive = readUserAdapter.fetchById(userId);
-        assertThat(userSingleReactive.mono().blockOptional()).isPresent().contains(user);
+        UnitReactive<User> userUnitReactive = readUserAdapter.fetchById(userId);
+        assertThat(userUnitReactive.mono().blockOptional()).isPresent().contains(user);
     }
 
     @Test

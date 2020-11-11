@@ -6,7 +6,7 @@ import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.SingleReactive;
+import com.example.service.user.infrastructure.reactive.UnitReactive;
 import com.example.service.user.infrastructure.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ class FindUserService implements FindUserByIdUseCase, FindAllUsersUseCase {
     }
 
     @Override
-    public SingleReactive<User> findById(UserId userId) {
+    public UnitReactive<User> findById(UserId userId) {
         ObjectValidator.validate(userId);
         return readUserPort.fetchById(userId);
     }

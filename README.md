@@ -73,7 +73,7 @@ Do integration test on the controller, which is our application entry point.
 In order to have not coupling with the spring boot reactive approach, it was defined two wrappers:
 
 - `com.example.service.user.infrastructure.reactive.CollectionReactive`: wrapper of the `Flux` object from reactive spring (reactor) approach.
-- `com.example.service.user.infrastructure.reactive.SingleReactive`: wrapper of the `Mono` object from reactive spring (reactor) approach.
+- `com.example.service.user.infrastructure.reactive.UnitReactive`: wrapper of the `Mono` object from reactive spring (reactor) approach.
 
 These objects are used in the application level, to control the access to the reactive objects.
 
