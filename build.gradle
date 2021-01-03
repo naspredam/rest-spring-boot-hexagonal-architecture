@@ -32,8 +32,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.assertj:assertj-core:3.18.0'
-	testImplementation 'com.tngtech.archunit:archunit-junit5:0.14.1'
+	testImplementation 'org.assertj:assertj-core:3.18.1'
+	testImplementation 'com.tngtech.archunit:archunit-junit5:0.15.0'
 	testImplementation 'com.github.javafaker:javafaker:1.0.2'
 }
 
