@@ -2,16 +2,17 @@ package com.example.service.user.application.service;
 
 import com.example.service.user.application.port.persistence.WriteUserPort;
 import com.example.service.user.domain.User;
-import com.example.service.user.infrastructure.reactive.UnitReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
+
+import java.util.Optional;
 
 import static com.example.service.user.utils.DataFaker.fakeUserBuilder;
 import static com.example.service.user.utils.DataFaker.fakeUserId;
@@ -40,10 +41,10 @@ class ChangeExistingUserServiceTest {
     public void shouldReturnEmpty_whenUserIsNotFound() {
         User user = fakeUserBuilder().build();
 
-        Mockito.when(writeUserPort.update(user)).thenReturn(UnitReactive.of(Mono.empty()));
+        Mockito.when(writeUserPort.update(user)).thenReturn(Optional.empty());
 
-        UnitReactive<User> userUnitReactive = changeExistingUserService.updateUser(user);
-        assertThat(userUnitReactive.mono().blockOptional()).isEmpty();
+        assertThatThrownBy(() -> changeExistingUserService.updateUser(user))
+                .isInstanceOf(EntityNotFoundException.class);
         Mockito.verify(writeUserPort, Mockito.times(1)).update(Mockito.any());
     }
 
@@ -52,10 +53,10 @@ class ChangeExistingUserServiceTest {
         User user = fakeUserBuilder().id(null).build();
 
         User userFromPort = user.toBuilder().id(fakeUserId()).build();
-        Mockito.when(writeUserPort.update(user)).thenReturn(UnitReactive.of(Mono.just(userFromPort)));
+        Mockito.when(writeUserPort.update(user)).thenReturn(Optional.of(userFromPort));
 
-        UnitReactive<User> userUnitReactive = changeExistingUserService.updateUser(user);
-        assertThat(userUnitReactive.mono().block()).isEqualTo(userFromPort);
+        User updatedUser = changeExistingUserService.updateUser(user);
+        assertThat(updatedUser).isEqualTo(userFromPort);
     }
 
 }

@@ -5,6 +5,7 @@ import com.example.service.user.infrastructure.annotations.Mapper;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ class LayersArchitectureTest {
                     .andShould()
                         .beInterfaces()
                     .andShould()
-                        .beAssignableTo(ReactiveCrudRepository.class)
+                        .beAssignableTo(JpaRepository.class)
                     .andShould()
                         .haveSimpleNameEndingWith("Repository")
                     .andShould()

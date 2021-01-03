@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
@@ -33,33 +32,33 @@ class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<UserDto> saveUser(@RequestBody @Valid SaveUserBodyDto saveUserBodyDto) {
-        return changeUserEndpointAdapter.saveUser(saveUserBodyDto).mono();
+    public UserDto saveUser(@RequestBody @Valid SaveUserBodyDto saveUserBodyDto) {
+        return changeUserEndpointAdapter.saveUser(saveUserBodyDto);
     }
 
     @PutMapping("/{user_id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<UserDto> updateUser(@PathVariable("user_id") int userId,
+    public UserDto updateUser(@PathVariable("user_id") int userId,
                               @RequestBody @Valid SaveUserBodyDto saveUserBodyDto) {
-        return changeUserEndpointAdapter.updateUser(userId, saveUserBodyDto).mono();
+        return changeUserEndpointAdapter.updateUser(userId, saveUserBodyDto);
     }
 
     @GetMapping("/{user_id}")
     @ResponseStatus(HttpStatus.OK)
-    public Mono<UserDto> fetchUserById(@PathVariable("user_id") Integer userId) {
-        return findUserEndpointAdapter.fetchUserById(userId).mono();
+    public UserDto fetchUserById(@PathVariable("user_id") Integer userId) {
+        return findUserEndpointAdapter.fetchUserById(userId);
     }
 
     @DeleteMapping("/{user_id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteUserById(@PathVariable("user_id") Integer userId) {
-        return changeUserEndpointAdapter.deleteUser(userId).mono();
+    public void deleteUserById(@PathVariable("user_id") Integer userId) {
+        changeUserEndpointAdapter.deleteUser(userId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Flux<UserDto> fetchAllUsers() {
-        return findUserEndpointAdapter.fetchAllUsers().flux();
+    public Collection<UserDto> fetchAllUsers() {
+        return findUserEndpointAdapter.fetchAllUsers();
     }
 
 }

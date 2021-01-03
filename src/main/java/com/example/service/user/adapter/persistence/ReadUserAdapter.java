@@ -5,10 +5,11 @@ import com.example.service.user.application.port.persistence.ReadUserPort;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
 import com.example.service.user.infrastructure.annotations.Adapter;
-import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.UnitReactive;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static com.example.service.user.domain.UserFunctions.userFirstName;
 import static com.example.service.user.domain.UserFunctions.userLastName;
@@ -26,32 +27,30 @@ class ReadUserAdapter implements ReadUserPort {
     }
 
     @Override
-    public UnitReactive<Boolean> existsUserByName(User user) {
+    public Boolean existsUserByName(User user) {
         String firstName = userFirstName.apply(user);
         String lastName = userLastName.apply(user);
-        Mono<Boolean> booleanMono = userRepository.findByFirstNameAndLastName(firstName, lastName)
-                    .hasElements();
-        return UnitReactive.of(booleanMono);
+        return !userRepository.findByFirstNameAndLastName(firstName, lastName)
+                    .isEmpty();
     }
 
     @Override
-    public UnitReactive<Boolean> existsUserById(UserId userId) {
+    public Boolean existsUserById(UserId userId) {
         Integer userIdAsInt = userId.intValue();
-        Mono<Boolean> booleanMono = userRepository.existsById(userIdAsInt);
-        return UnitReactive.of(booleanMono);
+        return userRepository.existsById(userIdAsInt);
     }
 
     @Override
-    public UnitReactive<User> fetchById(UserId userId) {
-        Mono<UserData> byId = userRepository.findById(userId.intValue());
-        return UnitReactive.of(byId)
+    public Optional<User> fetchById(UserId userId) {
+        return userRepository.findById(userId.intValue())
                 .map(userJpaMapper::toDomain);
     }
 
     @Override
-    public CollectionReactive<User> fetchAll() {
-        Flux<UserData> all = userRepository.findAll();
-        return CollectionReactive.of(all)
-                .map(userJpaMapper::toDomain);
+    public List<User> fetchAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(userJpaMapper::toDomain)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

@@ -4,7 +4,6 @@ import com.example.service.user.application.port.persistence.ReadUserPort;
 import com.example.service.user.application.port.persistence.WriteUserPort;
 import com.example.service.user.application.usecase.SubmitNewUserUseCase;
 import com.example.service.user.domain.User;
-import com.example.service.user.infrastructure.reactive.UnitReactive;
 import com.example.service.user.infrastructure.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +21,12 @@ class SubmitNewUserService implements SubmitNewUserUseCase {
     }
 
     @Override
-    public UnitReactive<User> saveUser(User user) {
+    public User saveUser(User user) {
         ObjectValidator.validate(user);
 
-        return readUserPort.existsUserByName(user)
-                .flatMap(userExists -> userExists ?
-                        UnitReactive.error(new IllegalArgumentException("User duplicated...")) :
-                        writeUserPort.saveNew(user));
+        if(readUserPort.existsUserByName(user)) {
+            throw new IllegalArgumentException("User duplicated...");
+        }
+        return writeUserPort.saveNew(user);
     }
 }

@@ -3,18 +3,16 @@ package com.example.service.user.adapter.persistence;
 import com.example.service.user.adapter.persistence.model.UserData;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
-import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.UnitReactive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import static com.example.service.user.domain.UserFunctions.userFirstName;
 import static com.example.service.user.domain.UserFunctions.userIdAsInt;
@@ -45,10 +43,10 @@ class ReadUserAdapterTest {
         String lastName = userLastName.apply(user);
 
         Mockito.when(userRepository.findByFirstNameAndLastName(firstName, lastName))
-                .thenReturn(Flux.just(UserData.builder().build()));
+                .thenReturn(List.of(UserData.builder().build()));
 
-        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserByName(user);
-        assertThat(userFoundUnitReactive.mono().block()).isTrue();
+        Boolean userFound = readUserAdapter.existsUserByName(user);
+        assertThat(userFound).isTrue();
     }
 
     @Test
@@ -58,10 +56,10 @@ class ReadUserAdapterTest {
         String lastName = userLastName.apply(user);
 
         Mockito.when(userRepository.findByFirstNameAndLastName(firstName, lastName))
-                .thenReturn(Flux.empty());
+                .thenReturn(List.of());
 
-        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserByName(user);
-        assertThat(userFoundUnitReactive.mono().block()).isFalse();
+        Boolean userFoundUnitReactive = readUserAdapter.existsUserByName(user);
+        assertThat(userFoundUnitReactive).isFalse();
     }
 
     @Test
@@ -69,11 +67,10 @@ class ReadUserAdapterTest {
         User user = fakeUser();
         Integer userId = userIdAsInt.apply(user);
 
-        Mockito.when(userRepository.existsById(userId))
-                .thenReturn(Mono.just(true));
+        Mockito.when(userRepository.existsById(userId)).thenReturn(true);
 
-        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserById(UserId.of(userId));
-        assertThat(userFoundUnitReactive.mono().block()).isTrue();
+        Boolean userFoundUnitReactive = readUserAdapter.existsUserById(UserId.of(userId));
+        assertThat(userFoundUnitReactive).isTrue();
     }
 
     @Test
@@ -81,11 +78,10 @@ class ReadUserAdapterTest {
         User user = fakeUser();
         Integer userId = userIdAsInt.apply(user);
 
-        Mockito.when(userRepository.existsById(userId))
-                .thenReturn(Mono.just(false));
+        Mockito.when(userRepository.existsById(userId)).thenReturn(false);
 
-        UnitReactive<Boolean> userFoundUnitReactive = readUserAdapter.existsUserById(UserId.of(userId));
-        assertThat(userFoundUnitReactive.mono().block()).isFalse();
+        Boolean userFoundUnitReactive = readUserAdapter.existsUserById(UserId.of(userId));
+        assertThat(userFoundUnitReactive).isFalse();
     }
 
     @Test
@@ -93,10 +89,10 @@ class ReadUserAdapterTest {
         UserId userId = fakeUserId();
 
         Mockito.when(userRepository.findById(userId.intValue()))
-                .thenReturn(Mono.empty());
+                .thenReturn(Optional.empty());
 
-        UnitReactive<User> userOptional = readUserAdapter.fetchById(userId);
-        assertThat(userOptional.mono().blockOptional()).isEmpty();
+        Optional<User> userOptional = readUserAdapter.fetchById(userId);
+        assertThat(userOptional).isEmpty();
     }
 
     @Test
@@ -106,36 +102,35 @@ class ReadUserAdapterTest {
         User user = fakeUserBuilder().id(userId).build();
 
         Mockito.when(userRepository.findById(foundUserData.getId()))
-                .thenReturn(Mono.just(foundUserData));
+                .thenReturn(Optional.of(foundUserData));
         Mockito.when(userJpaMapper.toDomain(foundUserData)).thenReturn(user);
 
-        UnitReactive<User> userUnitReactive = readUserAdapter.fetchById(userId);
-        assertThat(userUnitReactive.mono().blockOptional()).isPresent().contains(user);
+        Optional<User> userOptional = readUserAdapter.fetchById(userId);
+        assertThat(userOptional).isPresent().contains(user);
     }
 
     @Test
     public void shouldReturnEmptyUserList_whenNoUserFound() {
-        Mockito.when(userRepository.findAll()).thenReturn(Flux.empty());
+        Mockito.when(userRepository.findAll()).thenReturn(List.of());
 
-        CollectionReactive<User> userCollectionReactive = readUserAdapter.fetchAll();
-        assertThat(userCollectionReactive.flux().collectList().block()).isEmpty();
+        Collection<User> userCollection = readUserAdapter.fetchAll();
+        assertThat(userCollection).isEmpty();
     }
 
     @Test
     public void shouldReturnFilledUserList_whenUsersFound() {
         UserData userData1 = fakeUserData();
         UserData userData2 = fakeUserData();
-        Flux<UserData> userDataFlux = Flux.just(userData1, userData2);
+        List<UserData> userDataList = List.of(userData1, userData2);
 
         User user1 = fakeUser();
         User user2 = fakeUser();
 
-        Mockito.when(userRepository.findAll()).thenReturn(userDataFlux);
+        Mockito.when(userRepository.findAll()).thenReturn(userDataList);
         Mockito.when(userJpaMapper.toDomain(userData1)).thenReturn(user1);
         Mockito.when(userJpaMapper.toDomain(userData2)).thenReturn(user2);
 
-        CollectionReactive<User> userCollectionReactive = readUserAdapter.fetchAll();
-        Collection<User> users = userCollectionReactive.flux().collectList().block();
+        Collection<User> users = readUserAdapter.fetchAll();
         assertThat(users).hasSize(2).containsExactlyInAnyOrder(user1, user2);
     }
 }

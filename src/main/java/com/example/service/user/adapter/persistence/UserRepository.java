@@ -1,12 +1,13 @@
 package com.example.service.user.adapter.persistence;
 
 import com.example.service.user.adapter.persistence.model.UserData;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import reactor.core.publisher.Flux;
+
+import java.util.Collection;
 
 @Repository
-public interface UserRepository extends ReactiveCrudRepository<UserData, Integer> {
+public interface UserRepository extends JpaRepository<UserData, Integer> {
 
-    Flux<UserData> findByFirstNameAndLastName(String firstName, String lastName);
+    Collection<UserData> findByFirstNameAndLastName(String firstName, String lastName);
 }

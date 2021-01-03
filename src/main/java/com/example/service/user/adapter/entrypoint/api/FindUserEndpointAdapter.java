@@ -5,9 +5,11 @@ import com.example.service.user.application.port.entrypoint.api.FindUserEndpoint
 import com.example.service.user.application.usecase.FindAllUsersUseCase;
 import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.UserId;
+import com.example.service.user.domain.User;
 import com.example.service.user.infrastructure.annotations.Adapter;
-import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.UnitReactive;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Adapter
 class FindUserEndpointAdapter implements FindUserEndpointPort {
@@ -27,15 +29,17 @@ class FindUserEndpointAdapter implements FindUserEndpointPort {
     }
 
     @Override
-    public UnitReactive<UserDto> fetchUserById(Integer id) {
+    public UserDto fetchUserById(Integer id) {
         UserId userId = UserId.of(id);
-        return findUserByIdUseCase.findById(userId)
-                .map(userDtoMapper::toDto);
+        User foundUser = findUserByIdUseCase.findById(userId);
+        return userDtoMapper.toDto(foundUser);
     }
 
     @Override
-    public CollectionReactive<UserDto> fetchAllUsers() {
+    public Collection<UserDto> fetchAllUsers() {
         return findAllUsersUseCase.fetchAllPersisted()
-                .map(userDtoMapper::toDto);
+                .stream()
+                .map(userDtoMapper::toDto)
+                .collect(Collectors.toUnmodifiableList());
     }
 }

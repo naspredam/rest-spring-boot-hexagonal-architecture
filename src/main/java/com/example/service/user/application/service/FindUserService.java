@@ -5,10 +5,12 @@ import com.example.service.user.application.usecase.FindAllUsersUseCase;
 import com.example.service.user.application.usecase.FindUserByIdUseCase;
 import com.example.service.user.domain.User;
 import com.example.service.user.domain.UserId;
-import com.example.service.user.infrastructure.reactive.CollectionReactive;
-import com.example.service.user.infrastructure.reactive.UnitReactive;
 import com.example.service.user.infrastructure.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.Collection;
+import java.util.Optional;
 
 @Service
 class FindUserService implements FindUserByIdUseCase, FindAllUsersUseCase {
@@ -20,13 +22,13 @@ class FindUserService implements FindUserByIdUseCase, FindAllUsersUseCase {
     }
 
     @Override
-    public UnitReactive<User> findById(UserId userId) {
+    public User findById(UserId userId) {
         ObjectValidator.validate(userId);
-        return readUserPort.fetchById(userId);
+        return readUserPort.fetchById(userId).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
-    public CollectionReactive<User> fetchAllPersisted() {
+    public Collection<User> fetchAllPersisted() {
         return readUserPort.fetchAll();
     }
 

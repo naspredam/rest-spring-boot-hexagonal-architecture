@@ -3,9 +3,10 @@ package com.example.service.user.application.service;
 import com.example.service.user.application.port.persistence.WriteUserPort;
 import com.example.service.user.application.usecase.ChangeExistingUserUseCase;
 import com.example.service.user.domain.User;
-import com.example.service.user.infrastructure.reactive.UnitReactive;
 import com.example.service.user.infrastructure.validator.ObjectValidator;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 
 @Service
 class ChangeExistingUserService implements ChangeExistingUserUseCase {
@@ -17,9 +18,9 @@ class ChangeExistingUserService implements ChangeExistingUserUseCase {
     }
 
     @Override
-    public UnitReactive<User> updateUser(User user) {
+    public User updateUser(User user) {
         ObjectValidator.validate(user);
 
-        return writeUserPort.update(user);
+        return writeUserPort.update(user).orElseThrow(EntityNotFoundException::new);
     }
 }
